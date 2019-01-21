@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atroposServer", "server\atroposServer.csproj", "{8B7FBEF4-DC38-4CF4-9896-76FA29A56C14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atroposServerTest", "test\atroposServerTest\atroposServerTest.csproj", "{2504B7D1-A509-43B6-8053-32DF9309FF3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5A349145-86A8-44D1-B5FC-68067E120400}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{8B7FBEF4-DC38-4CF4-9896-76FA29A56C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7FBEF4-DC38-4CF4-9896-76FA29A56C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7FBEF4-DC38-4CF4-9896-76FA29A56C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2504B7D1-A509-43B6-8053-32DF9309FF3A} = {5A349145-86A8-44D1-B5FC-68067E120400}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {360FA67A-A850-4719-9CF7-AD86268EB74F}
