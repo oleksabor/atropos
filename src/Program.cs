@@ -1,5 +1,5 @@
-﻿using accountTimer.Event;
-using accountTimer.Logging;
+﻿using Atropos.Server.Event;
+using Atropos.Server.Logging;
 using StructureMap;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using Topshelf;
 using Topshelf.LibLog;
 using Topshelf.StructureMap;
 
-namespace accountTimer
+namespace Atropos.Server
 {
 	class Program
 	{

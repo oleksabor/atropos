@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace accountTimer.NLog.Extention
+namespace Atropos.Server.NLog.Extention
 {
 	/// <summary>
 	/// renders exception starting from new line

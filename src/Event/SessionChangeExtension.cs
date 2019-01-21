@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Topshelf;
 
-namespace accountTimer.Event
+namespace Atropos.Server.Event
 {
 	public static class SessionChangeExtension
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace accountTimer
+namespace Atropos.Server
 {
 	public class Settings
 	{

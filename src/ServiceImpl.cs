@@ -1,5 +1,5 @@
-﻿using accountTimer.Event;
-using accountTimer.Logging;
+﻿using Atropos.Server.Event;
+using Atropos.Server.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Topshelf;
 
-namespace accountTimer
+namespace Atropos.Server
 {
 	public class ServiceImpl : ServiceControl, ServiceSessionChange
 	{
