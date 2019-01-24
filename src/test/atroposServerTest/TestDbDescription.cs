@@ -34,20 +34,15 @@ namespace atroposServerTest
 
 	}
 
-
 	class TestMappingSchema : MappingSchema
 	{
 		public TestMappingSchema()
 		{
 			SetDataType(typeof(TimeSpan), DataType.Int64);
-			SetDataType(typeof(TimeSpan?), DataType.Int64);
 
 			SetConvertExpression<TimeSpan, DataParameter>(x => DataParameter.Int64(null, (long)x.TotalSeconds));
-			SetConvertExpression<TimeSpan?, DataParameter>(x => new DataParameter(null, x.HasValue ? (object)(long)x.Value.TotalSeconds : null, DataType.Int64));
 
-			SetConvertExpression<long, TimeSpan>(x => TimeSpan.FromSeconds(x), true);
-			SetConvertExpression<long?, TimeSpan?>(x => x.HasValue ? TimeSpan.FromSeconds(x.Value) : default(TimeSpan?), true);
+			SetConvertExpression<long, TimeSpan>(x => x > 0 ? TimeSpan.FromSeconds(x) : TimeSpan.Zero, true);
 		}
 	}
-
 }

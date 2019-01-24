@@ -22,9 +22,14 @@ namespace atroposServerTest
 			Environment.CurrentDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, @"..\..\..");
 			// or identically under the hoods
 			//Directory.SetCurrentDirectory(TestContext.CurrentContext.TestDirectory);
+
+
 			LinqToDB.Common.Configuration.Linq.AllowMultipleQuery = true;
 			LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
 			LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Log.Debug($"{message} {displayName}"); };
+			
+			
+			
 			//LinqToDB.Mapping.MappingSchema.SetDataType(typeof(TimeSpan), DataType.NText);
 
 			//var mapping = LinqToDB.Mapping.MappingSchema.Default;

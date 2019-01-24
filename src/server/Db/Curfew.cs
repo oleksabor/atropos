@@ -13,7 +13,7 @@ namespace Atropos.Server.Db
 		[PrimaryKey, Identity]	public int Id { get; set; }
 		[Column]				public string WeekDay { get; set; }
 		[Column]				public TimeSpan Time { get; set; }
-		[Column]		public TimeSpan Break { get; set; }
+		[Column, Nullable]		public TimeSpan Break { get; set; }
 		[Column]				public int UserId { get; set; }
 
 		#region Associations

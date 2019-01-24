@@ -34,7 +34,6 @@ namespace atroposServerTest
 			using (var db = new TestDB())
 				try
 				{
-
 					var c = db.CreateCommand();
 
 					CreateTableIfNotExists<User>(db);
@@ -80,9 +79,10 @@ namespace atroposServerTest
 
 					var user = db.Users.LoadWith(_ => _.Curfews).FirstOrDefault(_ => _.Id == i);
 					Assert.IsNotNull(user);
+
 					var curfew = db.Curfews.LoadWith(_ => _.User).FirstOrDefault(_ => _.Id == cfi);
 					Assert.IsNotNull(curfew);
-					//Assert.AreEqual(null, curfew.Break);
+					Assert.AreEqual(TimeSpan.Zero, curfew.Break);
 					Assert.AreEqual(totalTime, curfew.Time);
 
 					Assert.AreEqual(1, user.Curfews.Count());
