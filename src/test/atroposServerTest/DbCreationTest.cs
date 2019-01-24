@@ -98,7 +98,7 @@ namespace atroposServerTest
 					Assert.AreEqual(testTime, cfBreak.Time);
 					Assert.AreEqual(testBreakTime, cfBreak.Break);
 
-					var usageDate = DateTime.Today;
+					var usageDate = DateTime.Now;
 					var usedTime = new TimeSpan(GetHour(), GetMinute(), 0);
 					var usage = new UsageLog() { UserId = user.Id, Date = usageDate, Used = usedTime };
 					var usageId = db.InsertWithInt32Identity(usage);
