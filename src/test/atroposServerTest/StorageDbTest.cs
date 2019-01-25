@@ -14,7 +14,7 @@ namespace atroposServerTest
 	/// this test requires actual db to be created
 	/// </summary>
 	[TestFixture]
-	public class StorageTest
+	public class StorageDbTest
 	{
 		Regex nameSplit = new Regex(@"(.*)(\\)(.*)");
 
