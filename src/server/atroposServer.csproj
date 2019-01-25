@@ -80,6 +80,7 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
+    <Compile Include="Db\Data.cs" />
     <Compile Include="Db\UsageLog.cs" />
     <Compile Include="Db\User.cs" />
     <Compile Include="Event\Woodpecker.cs" />

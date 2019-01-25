@@ -31,7 +31,7 @@ namespace atroposServerTest
 			}
 				//LinqToDB.DataProvider.SQLite.SQLiteTools.CreateDatabase(fileName);
 
-			using (var db = new TestDB())
+			using (var db = new Data())
 				try
 				{
 					var c = db.CreateCommand();
@@ -65,7 +65,7 @@ namespace atroposServerTest
 		public void InsertData()
 		{
 
-			using (var db = new TestDB())
+			using (var db = new Data())
 				try
 				{
 					var u = new User() { Login = "testLogin", Name = "testName" };
