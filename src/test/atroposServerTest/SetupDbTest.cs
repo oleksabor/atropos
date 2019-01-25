@@ -1,4 +1,4 @@
-﻿using Atropos.Server.Logging;
+﻿using Atropos.Common.Logging;
 using LinqToDB;
 using LinqToDB.Data;
 using NUnit.Framework;

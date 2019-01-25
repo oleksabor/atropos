@@ -77,10 +77,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Accounter.cs" />
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
     <Compile Include="Db\Data.cs" />
+    <Compile Include="Db\Storage.cs" />
+    <Compile Include="Db\TransactionScope.cs" />
     <Compile Include="Db\UsageLog.cs" />
     <Compile Include="Db\User.cs" />
     <Compile Include="Event\Woodpecker.cs" />
@@ -121,6 +122,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{01e61dbd-3943-490d-bdfe-abef4944ce04}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

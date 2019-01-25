@@ -87,8 +87,13 @@
     <Compile Include="DbCreationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetupDbTest.cs" />
+    <Compile Include="StorageTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{01e61dbd-3943-490d-bdfe-abef4944ce04}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\server\atroposServer.csproj">
       <Project>{8b7fbef4-dc38-4cf4-9896-76fa29a56c14}</Project>
       <Name>atroposServer</Name>

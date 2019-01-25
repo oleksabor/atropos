@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atroposServerTest", "test\a
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5A349145-86A8-44D1-B5FC-68067E120400}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{01E61DBD-3943-490D-BDFE-ABEF4944CE04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2504B7D1-A509-43B6-8053-32DF9309FF3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01E61DBD-3943-490D-BDFE-ABEF4944CE04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E61DBD-3943-490D-BDFE-ABEF4944CE04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E61DBD-3943-490D-BDFE-ABEF4944CE04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E61DBD-3943-490D-BDFE-ABEF4944CE04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

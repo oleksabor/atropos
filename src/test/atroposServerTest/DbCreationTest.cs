@@ -1,5 +1,5 @@
-﻿using Atropos.Server.Db;
-using Atropos.Server.Logging;
+﻿using Atropos.Common.Logging;
+using Atropos.Server.Db;
 using LinqToDB;
 using LinqToDB.Common;
 using LinqToDB.Data;
@@ -98,15 +98,18 @@ namespace atroposServerTest
 					Assert.AreEqual(testTime, cfBreak.Time);
 					Assert.AreEqual(testBreakTime, cfBreak.Break);
 
-					var usageDate = DateTime.Now;
+					var usageDate = DateTime.Today;
 					var usedTime = new TimeSpan(GetHour(), GetMinute(), 0);
-					var usage = new UsageLog() { UserId = user.Id, Date = usageDate, Used = usedTime };
+					var startTime = new TimeSpan(GetHour(), GetMinute(), GetMinute());
+
+					var usage = new UsageLog() { UserId = user.Id, Date = usageDate, Used = usedTime, Started = startTime };
 					var usageId = db.InsertWithInt32Identity(usage);
 					usage = db.UsageLogs.FirstOrDefault(_ => _.Id == usageId);
 
 					Assert.AreEqual(user.Id, usage.UserId);
 					Assert.AreEqual(usedTime, usage.Used);
 					Assert.AreEqual(usageDate, usage.Date);
+					Assert.AreEqual(startTime, usage.Started);
 
 				}
 				catch (LinqToDBConvertException l2dbe)

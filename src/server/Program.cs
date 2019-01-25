@@ -1,5 +1,5 @@
-﻿using Atropos.Server.Event;
-using Atropos.Server.Logging;
+﻿using Atropos.Common.Logging;
+using Atropos.Server.Event;
 using StructureMap;
 using System;
 using System.Collections.Generic;

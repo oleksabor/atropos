@@ -1,4 +1,4 @@
-﻿using Atropos.Server.Logging;
+﻿using Atropos.Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

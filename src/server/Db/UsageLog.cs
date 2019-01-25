@@ -13,6 +13,7 @@ namespace Atropos.Server.Db
 		[PrimaryKey, Identity]	public int Id		{ get; set; }
 		[Column]				public int UserId	{ get; set; }
 		[Column]				public DateTime Date { get; set; }
+		[Column]				public TimeSpan Started { get; set; }
 		[Column]				public TimeSpan Used { get; set; }
 	
 		/// <summary>
