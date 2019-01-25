@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Db
 {
-	public partial class Data : LinqToDB.Data.DataConnection
+	public partial class Data : LinqToDB.Data.DataConnection, IData
 	{
 		public ITable<User> Users { get { return this.GetTable<User>(); } }
 		public ITable<Curfew> Curfews { get { return this.GetTable<Curfew>(); } }
@@ -31,17 +31,9 @@ namespace Atropos.Server.Db
 			AddMappingSchema(new CustomMappingSchema());
 		}
 
-	}
-
-	class CustomMappingSchema : MappingSchema
-	{
-		public CustomMappingSchema()
+		ITransactionScope IData.BeginTransaction()
 		{
-			SetDataType(typeof(TimeSpan), DataType.Int64);
-
-			SetConvertExpression<TimeSpan, DataParameter>(x => DataParameter.Int64(null, (long)x.TotalSeconds));
-
-			SetConvertExpression<long, TimeSpan>(x => x > 0 ? TimeSpan.FromSeconds(x) : TimeSpan.Zero, true);
+			return new TransactionScope(base.BeginTransaction());
 		}
 	}
 }

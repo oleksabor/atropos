@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace atroposServerTest
 {
+	/// <summary>
+	/// this test creates db 
+	/// </summary>
 	[TestFixture]
 	public class DbCreationTest
     {
