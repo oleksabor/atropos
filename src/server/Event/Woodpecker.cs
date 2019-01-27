@@ -14,7 +14,7 @@ namespace Atropos.Server.Event
 
 		public void Start(string name)
 		{
-			base.Start(30);
+			base.Start(15);
 		}
 
 		public override void Run()

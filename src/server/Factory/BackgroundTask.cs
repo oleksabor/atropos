@@ -81,11 +81,11 @@ namespace Atropos.Server.Factory
 			Log.Trace("stopped watching");
 		}
 
-		protected void SleepAWhile(CancellationToken cncl, int waitTime, int pauseBetween)
+		protected void SleepAWhile(CancellationToken cncl, int waitTime, int sleepTime)
 		{
-			var time2sleep = 1000 / pauseBetween * waitTime;
+			var time2sleep = waitTime * 1000 / sleepTime;
 			for (int q = 0; q < time2sleep && !cncl.IsCancellationRequested; q++)
-				Thread.Sleep(waitTime);
+				Thread.Sleep(sleepTime);
 		}
 	}
 }

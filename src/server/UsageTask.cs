@@ -23,21 +23,29 @@ namespace Atropos.Server
 
 		public void Store(SessionData data)
 		{
-			var today = DateTime.Today;
 			if (data.IsLocked)
 				Log.TraceFormat("session is locked, ignoring sender:{0}", data.SenderO);
-			var usage = _storage.GetUsage(data.User, today);
 			switch (data.Reason)
 			{
-				case Kind.Connected:
+				case Kind.Connected: // nothing to log here since user has just logged in
 					//_storage.AddUsage(data.User, TimeSpan.Zero, today);
 					break;
-				case Kind.Unknown:
-				case Kind.Disconnected:
-					if (data.User != "SYSTEM")
-						_storage.AddUsage(data.User, data.Spent, today);
+				case Kind.Unknown: // session is active seems that event was sent from woodpecker
+				case Kind.Disconnected: // to save time from last Store call
+					Save(data);
 					break;
+			}
+		}
 
+		void Save(SessionData data)
+		{
+			var today = DateTime.Today;
+			var usage = _storage.GetUsage(data.User, today);
+			using (var t = _storage.BeginTransaction())
+			{
+				Log.DebugFormat("saving usage {0} {1}", data.User, data.Spent.TotalSeconds);
+				_storage.AddUsage(data.User, data.Spent, today);
+				t.Commit();
 			}
 		}
 

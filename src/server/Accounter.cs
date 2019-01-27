@@ -49,7 +49,13 @@ namespace Atropos.Server
 
 		public void Add(SessionData data)
 		{
-			_items.Enqueue(data);
+			if (!"SYSTEM".Equals(data.User))
+				_items.Enqueue(data);
+		}
+
+		bool Any()
+		{
+			return _items.Any();
 		}
 
 		public SessionData Get()
@@ -80,11 +86,15 @@ namespace Atropos.Server
 
 		public override void Run()
 		{
+			Log.Trace("checking queue");
 			SessionData data;
-			using (var c = _instance.Child())
-			using (var ut = c.Create<UsageTask>())
-				while ((data = Get()) != null)
-					ut.Store(data);
+			if (Any())
+			{
+				using (var c = _instance.Child())
+				using (var ut = c.Create<UsageTask>())
+					while ((data = Get()) != null)
+						ut.Store(data);
+			}
 		}
 	}
 }
