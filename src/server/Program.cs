@@ -48,6 +48,15 @@ namespace Atropos.Server
 
 		static void Configure(IContainer value)
 		{
+			value.Configure(_ =>
+			{
+				_.Scan(a =>
+				{
+					a.TheCallingAssembly();
+					a.AssemblyContainingType<Atropos.Server.Db.IData>();
+					a.WithDefaultConventions();
+				});
+			});
 		}
 	}
 
