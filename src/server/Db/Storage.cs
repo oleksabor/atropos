@@ -22,6 +22,11 @@ namespace Atropos.Server.Db
 			db = data;
 		}
 
+		static Storage()
+		{
+			LinqToDB.Common.Configuration.Linq.AllowMultipleQuery = true;
+		}
+
 		public ITransactionScope BeginTransaction()
 		{
 			return db.BeginTransaction();
@@ -72,7 +77,6 @@ namespace Atropos.Server.Db
 		{
 			return db.Curfews.Where(_ => _.UserId == user.Id);
 		}
-
 
 		public User AddUser(string login, string name)
 		{

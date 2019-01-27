@@ -1,4 +1,5 @@
-﻿using Atropos.Server.Db;
+﻿using Atropos.Common.Logging;
+using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
 using System;
@@ -11,7 +12,10 @@ namespace Atropos.Server
 {
 	public class UsageTask : DisposeGently
 	{
+		static ILog Log = LogProvider.GetCurrentClassLogger();
+
 		Storage _storage;
+
 		public UsageTask(Storage storage)
 		{
 			_storage = storage;
@@ -20,7 +24,8 @@ namespace Atropos.Server
 		public void Store(SessionData data)
 		{
 			var today = DateTime.Today;
-
+			if (data.IsLocked)
+				Log.TraceFormat("session is locked, ignoring sender:{0}", data.SenderO);
 			var usage = _storage.GetUsage(data.User, today);
 			switch (data.Reason)
 			{

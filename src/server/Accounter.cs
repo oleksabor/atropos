@@ -38,11 +38,9 @@ namespace Atropos.Server
 				return;
 			}
 
-			var state = SessionInformation.GetSessionLockState(data.SessionID);
-
 			data.Spent = milliseconds;
 
-			Log.DebugFormat("session changed {0}, state:{1}", data, state);
+			Log.DebugFormat("session changed {0}, locked:{1}", data, data.IsLocked);
 
 			Add(data);
 

@@ -43,7 +43,7 @@ namespace Atropos.Server
 							.StartAutomatically();
 				});
 			}
-			Log.Info("closing and going home");
+			Log.Info("going home");
 		}
 
 		static void Configure(IContainer value)

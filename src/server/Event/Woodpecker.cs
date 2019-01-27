@@ -26,6 +26,9 @@ namespace Atropos.Server.Event
 				var sd = new SessionData(sessionId, reason.ToCode().ToKind(), this);
 				sd.User = SessionInformation.GetUsernameBySessionId(sessionId, false);
 
+				var state = SessionInformation.GetSessionLockState(sessionId);
+				sd.IsLocked = state == SessionInformation.LockState.Locked;
+
 				OnFound?.Invoke(sd);
 			}
 		}

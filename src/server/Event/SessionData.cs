@@ -15,6 +15,8 @@ namespace Atropos.Server.Event
 		public Kind Reason { get; internal set; }
 		WeakReference Sender;
 
+		public bool IsLocked { get; set; }
+
 		public TimeSpan Spent { get; set; }
 
 		public override string ToString()
