@@ -15,13 +15,17 @@ namespace Atropos.Server.Factory
 		Task _sessionWatcher;
 		CancellationTokenSource _cts;
 
+		public BackgroundTask()
+		{
+			_cts = new CancellationTokenSource();
+		}
+
 		/// <summary>
 		/// Starts to execute the <see cref="Run"/> method with pause between.
 		/// </summary>
 		/// <param name="pause">The pause time between method execution in seconds.</param>
 		public void Start(int pause)
 		{
-			_cts = new CancellationTokenSource();
 			_sessionWatcher = Task.Run(() => Watch(new Startup { CnclToken = _cts.Token, Pause = pause }), _cts.Token);
 		}
 
@@ -33,7 +37,7 @@ namespace Atropos.Server.Factory
 			_cts.Cancel();
 			Thread.Sleep(_waitTime);
 
-			if (_sessionWatcher.Status == TaskStatus.Running)
+			if (_sessionWatcher != null && _sessionWatcher.Status == TaskStatus.Running)
 			{
 				Log.Warn("seesion watcher still is active");
 				_sessionWatcher.Wait(_waitTime / 2);
@@ -46,26 +50,33 @@ namespace Atropos.Server.Factory
 			public CancellationToken CnclToken;
 		}
 
+		protected bool Stopping => _cts.IsCancellationRequested;
+
 		protected const int _waitTime = 100;
 		
-		void Watch(object data)
+		void Watch(Startup data)
 		{
 			try
 			{
-				var startup = (Startup)data;
-
-				var cncl = startup.CnclToken;
+				var cncl = data.CnclToken;
 
 				while (!cncl.IsCancellationRequested)
 				{
-					Run();
+					try
+					{
+						Run();
+					}
+					catch (Exception e)
+					{
+						Log.ErrorException("watch error", e);
+					}
 
-					SleepAWhile(cncl, startup.Pause, _waitTime);
+					SleepAWhile(cncl, data.Pause, _waitTime);
 				}
 			}
 			catch (Exception e)
 			{
-				Log.ErrorException("failed to watch for active session", e);
+				Log.ErrorException("failed to watch", e);
 			}
 			Log.Trace("stopped watching");
 		}

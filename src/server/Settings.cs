@@ -8,6 +8,10 @@ namespace Atropos.Server
 {
 	public class Settings
 	{
+	}
 
+	public class ServiceOptions
+	{
+		public string Name { get; set; }
 	}
 }

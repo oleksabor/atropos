@@ -83,6 +83,7 @@
     <Compile Include="Db\Data.cs" />
     <Compile Include="Db\IData.cs" />
     <Compile Include="Db\Storage.cs" />
+    <Compile Include="Db\StorageTool.cs" />
     <Compile Include="Db\TransactionScope.cs" />
     <Compile Include="Db\UsageLog.cs" />
     <Compile Include="Db\User.cs" />

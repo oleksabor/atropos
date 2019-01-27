@@ -1,4 +1,5 @@
 ﻿using Atropos.Common.Logging;
+using Atropos.Server.Db;
 using Atropos.Server.Event;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,19 @@ namespace Atropos.Server
 	public class ServiceImpl : ServiceControl, ServiceSessionChange
 	{
 		Woodpecker _listener;
-		string _serviceName;
+		ServiceOptions _options;
 		Accounter _accounter;
+		StorageTool _stTool;
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public ServiceImpl(string serviceName, Woodpecker listener, Accounter accounter)
+		public ServiceImpl(ServiceOptions options, Woodpecker listener, Accounter accounter, StorageTool stTool)
 		{
 			_listener = listener;
 			_listener.OnFound += session_OnFound;
-			_serviceName = serviceName;
+			_options = options;
 			_accounter = accounter;
+			_stTool = stTool;
 		}
 
 		private void session_OnFound(SessionData data)
@@ -32,10 +35,11 @@ namespace Atropos.Server
 
 		public bool Start(HostControl hostControl)
 		{
-			Log.DebugFormat("starting service:{0}", _serviceName);
+			Log.DebugFormat("starting service:{0}", _options.Name);
 			try
 			{
-				_listener.Start(_serviceName);
+				_stTool.CheckDb();
+				_listener.Start(_options.Name);
 				_accounter.Start();
 			}
 			catch (Exception e)

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Atropos.Server
 {
@@ -15,8 +14,6 @@ namespace Atropos.Server
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 		Instance _instance;
-
-		bool _inactive;
 
 		public Accounter(Instance factory)
 		{
@@ -35,9 +32,9 @@ namespace Atropos.Server
 		{
 			var milliseconds = TimeSpan.FromMilliseconds(_watch.Value.ElapsedMilliseconds);
 
-			if (_inactive)
+			if (Stopping)
 			{
-				Log.Warn("inactive already set");
+				Log.Warn("accounter is being stopped");
 				return;
 			}
 
@@ -87,11 +84,9 @@ namespace Atropos.Server
 		{
 			SessionData data;
 			using (var c = _instance.Child())
-				using (var ut = c.Create<UsageTask>())
+			using (var ut = c.Create<UsageTask>())
 				while ((data = Get()) != null)
-				{
 					ut.Store(data);
-				}
 		}
 	}
 }

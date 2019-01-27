@@ -29,8 +29,14 @@ namespace Atropos.Server
 
 					x.UseStructureMap(container);
 
+					Configure(container);
+
 					x.EnableSessionChanged();
-					x.Service(_ => new ServiceImpl(_.ServiceName, new Woodpecker(), new Accounter(new Instance(container))));
+					x.Service(_ =>
+					{
+						container.Configure(c => c.For<ServiceOptions>().Use(new ServiceOptions { Name = _.ServiceName }));
+						return container.GetInstance<ServiceImpl>();
+					});
 
 					x.RunAsPrompt()
 							.DependsOnEventLog()
@@ -39,5 +45,11 @@ namespace Atropos.Server
 			}
 			Log.Info("closing and going home");
 		}
+
+		static void Configure(IContainer value)
+		{
+		}
 	}
+
+
 }

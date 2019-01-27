@@ -20,20 +20,23 @@ namespace Atropos.Server
 		public void Store(SessionData data)
 		{
 			var today = DateTime.Today;
+
 			var usage = _storage.GetUsage(data.User, today);
 			switch (data.Reason)
 			{
 				case Kind.Connected:
-					_storage.AddUsage(data.User, TimeSpan.Zero, today);
+					//_storage.AddUsage(data.User, TimeSpan.Zero, today);
 					break;
+				case Kind.Unknown:
 				case Kind.Disconnected:
-					_storage.AddUsage(data.User, data.Spent, today);
+					if (data.User != "SYSTEM")
+						_storage.AddUsage(data.User, data.Spent, today);
 					break;
 
 			}
 		}
 
-		protected override void DisposeIt()
+		public override void DisposeIt()
 		{
 			_storage.Dispose();
 		}

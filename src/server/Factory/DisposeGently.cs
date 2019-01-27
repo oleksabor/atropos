@@ -11,24 +11,16 @@ namespace Atropos.Server.Factory
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls
 
-		protected abstract void DisposeIt();
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!disposedValue)
-			{
-				if (disposing)
-				{
-					DisposeIt();
-				}
-
-				disposedValue = true;
-			}
-		}
+		public abstract void DisposeIt();
 
 		public void Dispose()
 		{
-			Dispose(true);
+			if (!disposedValue)
+			{
+				DisposeIt();
+				
+				disposedValue = true;
+			}
 		}
 		#endregion
 	}

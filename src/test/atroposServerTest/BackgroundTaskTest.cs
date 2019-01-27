@@ -1,5 +1,6 @@
 ﻿using Atropos.Server.Factory;
 using NUnit.Framework;
+using Rhino.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,23 +16,31 @@ namespace atroposServerTest
 		[TestCase]
 		public void Run()
 		{
-			var rt = new RunTest();
+			var runCount = 0;
+
+			var rt = MockRepository.Mock<BackgroundTask>();
+			rt.Stub(_ => _.Run()).WhenCalled(() => runCount++);
+
 			rt.Start(1);
 			Thread.Sleep(3000);
-
 			rt.Stop();
 
-			Assert.IsTrue(rt.RunCount >= 3);
+			Assert.IsTrue(runCount >= 3);
 		}
 
-		public class RunTest : BackgroundTask
+		[TestCase]
+		public void RunException()
 		{
-			public override void Run()
-			{
-				RunCount++;
-			}
+			var runCount = 0;
 
-			public int RunCount;
+			var rt = MockRepository.Mock<BackgroundTask>();
+			rt.Stub(_ => _.Run()).WhenCalled(() => { runCount++; throw new NotImplementedException(); });
+
+			rt.Start(1);
+			Thread.Sleep(3000);
+			rt.Stop();
+
+			Assert.IsTrue(runCount >= 3);
 		}
 	}
 }

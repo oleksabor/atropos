@@ -87,7 +87,7 @@ namespace Atropos.Server.Db
 			return user;
 		}
 
-		protected override void DisposeIt()
+		public override void DisposeIt()
 		{
 			db.Dispose();
 		}
