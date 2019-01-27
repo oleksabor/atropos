@@ -27,5 +27,23 @@ namespace Atropos.Server.Event
 				default: return default(SessionChangeReasonCode);
 			}
 		}
+
+		public static Kind ToKind(this SessionChangeReasonCode value)
+		{
+			switch (value)
+			{
+				case SessionChangeReasonCode.ConsoleConnect:
+				case SessionChangeReasonCode.RemoteConnect:
+				case SessionChangeReasonCode.SessionLogon:
+				case SessionChangeReasonCode.SessionUnlock:
+					return Kind.Connected;
+				case SessionChangeReasonCode.ConsoleDisconnect:
+				case SessionChangeReasonCode.RemoteDisconnect:
+				case SessionChangeReasonCode.SessionLogoff:
+				case SessionChangeReasonCode.SessionLock:
+					return Kind.Disconnected;
+				default: return Kind.Unknown;
+			}
+		}
 	}
 }

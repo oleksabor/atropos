@@ -36,6 +36,7 @@ namespace Atropos.Server
 			try
 			{
 				_listener.Start(_serviceName);
+				_accounter.Start();
 			}
 			catch (Exception e)
 			{
@@ -50,6 +51,7 @@ namespace Atropos.Server
 		{
 			Log.Debug("stopping");
 			_listener.Stop();
+			_accounter.Stop();
 			Log.Trace("stopped");
 			return true;
 		}
@@ -57,7 +59,7 @@ namespace Atropos.Server
 		public void SessionChange(HostControl hostControl, SessionChangedArguments changedArguments)
 		{
 			var sid = (uint)changedArguments.SessionId;
-			_accounter.Changed(new SessionData(sid, changedArguments.ReasonCode, this) { User = SessionInformation.GetUsernameBySessionId(sid, false) });
+			_accounter.Changed(new SessionData(sid, changedArguments.ReasonCode.ToKind(), this) { User = SessionInformation.GetUsernameBySessionId(sid, false) });
 		}
 	}
 }

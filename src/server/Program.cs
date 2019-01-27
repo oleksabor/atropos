@@ -1,5 +1,6 @@
 ﻿using Atropos.Common.Logging;
 using Atropos.Server.Event;
+using Atropos.Server.Factory;
 using StructureMap;
 using System;
 using System.Collections.Generic;
@@ -26,10 +27,10 @@ namespace Atropos.Server
 					x.UseLibLog();
 					x.UseAssemblyInfoForServiceInfo();
 
-					//x.UseStructureMap(container);
+					x.UseStructureMap(container);
 
 					x.EnableSessionChanged();
-					x.Service(_ => new ServiceImpl(_.ServiceName, new Woodpecker(), new Accounter()));
+					x.Service(_ => new ServiceImpl(_.ServiceName, new Woodpecker(), new Accounter(new Instance(container))));
 
 					x.RunAsPrompt()
 							.DependsOnEventLog()

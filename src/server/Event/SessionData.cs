@@ -12,8 +12,10 @@ namespace Atropos.Server.Event
 		public uint SessionID { get; set; }
 		public string Domain { get; set; }
 		public string User { get; set; }
-		public SessionChangeReasonCode Reason { get; internal set; }
+		public Kind Reason { get; internal set; }
 		WeakReference Sender;
+
+		public TimeSpan Spent { get; set; }
 
 		public override string ToString()
 		{
@@ -22,7 +24,7 @@ namespace Atropos.Server.Event
 
 		public object SenderO { get { return Sender.IsAlive ? Sender.Target : null; } }
 
-		public SessionData(uint id, SessionChangeReasonCode code, object sender)
+		public SessionData(uint id, Kind code, object sender)
 		{
 			SessionID = id;
 			Reason = code;

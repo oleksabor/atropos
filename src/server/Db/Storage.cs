@@ -1,4 +1,5 @@
 ﻿using Atropos.Common.String;
+using Atropos.Server.Factory;
 using LinqToDB;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Atropos.Server.Db
 	/// DAL logic implementation
 	/// </summary>
 	/// <seealso cref="System.IDisposable" />
-	public class Storage : IDisposable
+	public class Storage : DisposeGently
 	{
 		IData db;
 
@@ -38,14 +39,17 @@ namespace Atropos.Server.Db
 				_ => new UsageLog { Used = _.Used + value }, 
 				() => new UsageLog { Date = date, UserId = user.Id });
 
-			var usage = db.UsageLogs.Single(_ => _.Date == date && _.UserId == user.Id);
-			return usage;
+			return GetUsage(login, date);
 		}
 
-		public User AddUser(string login, string name)
+		public UsageLog GetUsage(string login, DateTime date)
 		{
-			db.Users.InsertOrUpdate(() => new User { Login = login, Name = name }, _ => new User() { Name = name }, () => new User { Login = login });
-			return GetUser(login);
+			var usage = from ul in db.UsageLogs
+						join u in db.Users on ul.UserId equals u.Id
+						where ul.Date == date 
+						&& u.Login == login
+						select ul;
+			return usage.FirstOrDefault();
 		}
 
 		public Curfew AddCurfew(string login, TimeSpan time, TimeSpan breakTime, string weekDay)
@@ -64,6 +68,18 @@ namespace Atropos.Server.Db
 			return db.Curfews.Single(_ => _.Id == value.Id);
 		}
 
+		public IEnumerable<Curfew> GetUserCurfews(User user)
+		{
+			return db.Curfews.Where(_ => _.UserId == user.Id);
+		}
+
+
+		public User AddUser(string login, string name)
+		{
+			db.Users.InsertOrUpdate(() => new User { Login = login, Name = name }, _ => new User() { Name = name }, () => new User { Login = login });
+			return GetUser(login);
+		}
+
 		public User GetUser(string login)
 		{
 			var user = db.Users.LoadWith(_ => _.Curfews).Single(_ => _.Login == login);
@@ -71,18 +87,9 @@ namespace Atropos.Server.Db
 			return user;
 		}
 
-		public IEnumerable<Curfew> GetUserCurfews(User user)
+		protected override void DisposeIt()
 		{
-			return db.Curfews.Where(_ => _.UserId == user.Id);
-		}
-
-		public void Dispose()
-		{
-			if (db != null)
-			{
-				db.Dispose();
-				db = null;
-			}
+			db.Dispose();
 		}
 	}
 }
