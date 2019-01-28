@@ -42,11 +42,16 @@ namespace Atropos.Server
 			var today = DateTime.Today;
 			var usage = _storage.GetUsage(data.User, today);
 			using (var t = _storage.BeginTransaction())
-			{
-				Log.DebugFormat("saving usage {0} {1}", data.User, data.Spent.TotalSeconds);
-				_storage.AddUsage(data.User, data.Spent, today);
-				t.Commit();
-			}
+				try
+				{
+					Log.DebugFormat("saving usage {0} {1}", data.User, data.Spent.TotalSeconds);
+					_storage.AddUsage(data.User, data.Spent, today);
+					t.Commit();
+				}
+				catch (Exception e)
+				{
+					throw new ApplicationException(string.Format("failed to save usage data {0}", data), e);
+				}
 		}
 
 		public override void DisposeIt()
