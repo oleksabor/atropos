@@ -42,6 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="Dto\Curfew.cs" />
+    <Compile Include="Dto\IdDto.cs" />
+    <Compile Include="Dto\UsageLog.cs" />
+    <Compile Include="Dto\User.cs" />
     <Compile Include="StringExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
