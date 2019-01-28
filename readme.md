@@ -1,6 +1,8 @@
-This should be set of tools to watch users curfew. 
+This should be set of tools to watch for users curfew. 
 
-It has been developed since Windows 10 allows to manage curfew for Microsoft based accounts only. However I do not suppose that my children have to have MS account to use home computer. But I'd like to restrict their computer usage that is why I've set up Windows 8 curfew. The problem is that this functionality has gone after Windows 10 update for local account.
+It has been developed since Windows 10 allows to manage curfew for Microsoft based accounts only. However I do not suppose that my children have to have MS account to use home computer. But I'd like to restrict their computer usage that is why I've used Windows 8 curfew. 
+
+The problem is that this functionality has gone for local accounts in Windows 10.
 
 The idea it to manage certain local account curfew from local administrator account. 
 
