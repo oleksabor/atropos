@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace Atropos.Server
+namespace Atropos.Server.Worker
 {
 	public class Accounter : BackgroundTask, IDisposable
 	{

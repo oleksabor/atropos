@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Atropos.Server
+namespace Atropos.Server.Worker
 {
 	public class UsageTask : DisposeGently
 	{

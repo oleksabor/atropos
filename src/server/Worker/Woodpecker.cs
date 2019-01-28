@@ -1,4 +1,5 @@
 ﻿using Atropos.Common.Logging;
+using Atropos.Server.Event;
 using Atropos.Server.Factory;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 
-namespace Atropos.Server.Event
+namespace Atropos.Server.Worker
 {
 	public class Woodpecker : BackgroundTask
 	{

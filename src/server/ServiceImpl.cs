@@ -1,6 +1,7 @@
 ﻿using Atropos.Common.Logging;
 using Atropos.Server.Db;
 using Atropos.Server.Event;
+using Atropos.Server.Worker;
 using System;
 using System.Collections.Generic;
 using System.Linq;
