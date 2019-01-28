@@ -23,8 +23,6 @@ namespace Atropos.Server
 
 		public void Store(SessionData data)
 		{
-			if (data.IsLocked)
-				Log.TraceFormat("session is locked, ignoring sender:{0}", data.SenderO);
 			switch (data.Reason)
 			{
 				case Kind.Connected: // nothing to log here since user has just logged in

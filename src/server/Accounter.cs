@@ -15,11 +15,13 @@ namespace Atropos.Server
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 		Instance _instance;
+		MarkerBool _marker;
 
-		public Accounter(Instance factory)
+		public Accounter(Instance factory, MarkerBool marker)
 		{
 			_instance = factory;
 			_items = new ConcurrentQueue<SessionData>();
+			_marker = marker;
 		}
 
 		/// <summary>
@@ -41,8 +43,6 @@ namespace Atropos.Server
 
 			data.Spent = milliseconds;
 
-			Log.DebugFormat("session changed {0}, locked:{1}", data, data.IsLocked);
-
 			Add(data);
 
 			_watch.Value.Restart();
@@ -50,9 +50,27 @@ namespace Atropos.Server
 
 		public void Add(SessionData data)
 		{
+			var quit = false;
+			if (data.IsLocked)
+				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.SenderO));
 			if ("SYSTEM".Equals(data.User, StringComparison.OrdinalIgnoreCase) || data.User.IsEmpty())
+				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.SenderO));
+
+			if (quit)
 				return;
+
+			_marker.Clear();
 			_items.Enqueue(data);
+		}
+
+		bool LogOnce(MarkerBool m, string key, Action log)
+		{
+			if (!m.Is(key))
+			{
+				log();
+				m.Set(key, true);
+			}
+			return true;
 		}
 
 		bool Any()
