@@ -1,4 +1,5 @@
 ﻿using Atropos.Common.Logging;
+using Atropos.Common.String;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
 using System;
@@ -49,8 +50,9 @@ namespace Atropos.Server
 
 		public void Add(SessionData data)
 		{
-			if (!"SYSTEM".Equals(data.User))
-				_items.Enqueue(data);
+			if ("SYSTEM".Equals(data.User, StringComparison.OrdinalIgnoreCase) || data.User.IsEmpty())
+				return;
+			_items.Enqueue(data);
 		}
 
 		bool Any()
