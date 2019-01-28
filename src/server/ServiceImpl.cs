@@ -38,7 +38,8 @@ namespace Atropos.Server
 			Log.DebugFormat("starting service:{0}", _options.Name);
 			try
 			{
-				_stTool.CheckDb();
+				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
+
 				_listener.Start(_options.Name);
 				_accounter.Start();
 			}
@@ -54,8 +55,10 @@ namespace Atropos.Server
 		public bool Stop(HostControl hostControl)
 		{
 			Log.Debug("stopping");
+
 			_listener.Stop();
 			_accounter.Stop();
+
 			Log.Trace("stopped");
 			return true;
 		}

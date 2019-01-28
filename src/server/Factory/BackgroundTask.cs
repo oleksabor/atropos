@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Factory
 {
+	/// <summary>
+	/// base class for running certain method in background thread
+	/// </summary>
 	public abstract class BackgroundTask
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
@@ -15,34 +18,61 @@ namespace Atropos.Server.Factory
 		Task _sessionWatcher;
 		CancellationTokenSource _cts;
 
-		public BackgroundTask()
-		{
-			_cts = new CancellationTokenSource();
-		}
+		/// <summary>
+		/// Gets or sets a value indicating whether method Run has to be executed when Stop is called.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> to execute Run(); otherwise, <c>false</c>.
+		/// </value>
+		public bool RunOnStop { get; protected set; }
 
 		/// <summary>
 		/// Starts to execute the <see cref="Run"/> method with pause between.
 		/// </summary>
-		/// <param name="pause">The pause time between method execution in seconds.</param>
+		/// <param name="pause">The pause time between method execution (in seconds).</param>
 		public void Start(int pause)
 		{
-			_sessionWatcher = Task.Run(() => Watch(new Startup { CnclToken = _cts.Token, Pause = pause }), _cts.Token);
+			DoSafe(_startLock, () => _sessionWatcher == null, () =>
+			{
+				_cts = new CancellationTokenSource();
+				Log.DebugFormat("starting {0}", ClassName);
+				_sessionWatcher = Task.Run(() => Watch(new Startup { CnclToken = _cts.Token, Pause = pause }), _cts.Token);
+			});
 		}
 
 		public abstract void Run();
 
+		/// <summary>
+		/// Stops background running. Executes <see cref="Run"/> method if <see cref="RunOnStop"/> was set
+		/// </summary>
 		public void Stop()
 		{
-			Log.Trace("cancelling token");
-			_cts.Cancel();
-			Thread.Sleep(_waitTime);
+			if (RunOnStop)
+				RunWithLock();
 
-			if (_sessionWatcher != null && _sessionWatcher.Status == TaskStatus.Running)
+			Log.DebugFormat("stopping {0}", ClassName);
+			if (_cts != null)
 			{
-				Log.Warn("seesion watcher still is active");
-				_sessionWatcher.Wait(_waitTime / 2);
+				_cts.Cancel();
+				Thread.Sleep(_waitTime);
 			}
+
+			DoSafe(_runLock, () => _sessionWatcher != null && _sessionWatcher.Status == TaskStatus.Running, () =>
+			{
+				try
+				{
+					Log.WarnFormat("seesion watcher still is active {0}", ClassName);
+					_sessionWatcher.Wait(_waitTime);
+				}
+				catch (Exception e)
+				{
+					Log.ErrorException("error while stopping {0}", e, ClassName);
+				}
+			});
+			_sessionWatcher = null;
 		}
+
+		string ClassName {  get { return GetType().Name; } }
 
 		class Startup
 		{
@@ -53,8 +83,13 @@ namespace Atropos.Server.Factory
 		protected bool Stopping => _cts.IsCancellationRequested;
 
 		protected const int _waitTime = 100;
+
+		protected bool Running { get; private set; }
+
+		object _runLock = new object();
+		object _startLock = new object();
 		
-		void Watch(Startup data)
+		private void Watch(Startup data)
 		{
 			try
 			{
@@ -62,23 +97,44 @@ namespace Atropos.Server.Factory
 
 				while (!cncl.IsCancellationRequested)
 				{
-					try
-					{
-						Run();
-					}
-					catch (Exception e)
-					{
-						Log.ErrorException("watch error", e);
-					}
+					RunWithLock();
 
 					SleepAWhile(cncl, data.Pause, _waitTime);
 				}
 			}
 			catch (Exception e)
 			{
-				Log.ErrorException("failed to watch", e);
+				Log.ErrorException("failed to watch {0}", e, ClassName);
 			}
 			Log.Trace("stopped watching");
+		}
+
+		protected void RunWithLock()
+		{
+			DoSafe(_runLock, () => !Running, () =>
+				{
+				try
+				{
+					Running = true;
+					Run();
+				}
+				catch (Exception e)
+				{
+					Log.ErrorException("run error", e);
+				}
+				finally
+				{
+					Running = false;
+				}
+			});
+		}
+
+		protected void DoSafe(object locker, Func<bool> condition, Action work)
+		{
+			if (condition())
+				lock (locker)
+					if (condition())
+						work();
 		}
 
 		protected void SleepAWhile(CancellationToken cncl, int waitTime, int sleepTime)

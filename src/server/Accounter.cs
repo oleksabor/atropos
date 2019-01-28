@@ -22,6 +22,8 @@ namespace Atropos.Server
 			_instance = factory;
 			_items = new ConcurrentQueue<SessionData>();
 			_marker = marker;
+
+			RunOnStop = true; // to save cached events
 		}
 
 		/// <summary>
@@ -106,7 +108,6 @@ namespace Atropos.Server
 
 		public override void Run()
 		{
-			Log.Trace("checking queue");
 			SessionData data;
 			if (Any())
 			{
