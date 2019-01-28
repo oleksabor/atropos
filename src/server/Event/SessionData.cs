@@ -21,7 +21,7 @@ namespace Atropos.Server.Event
 
 		public override string ToString()
 		{
-			return string.Format("id:{0} user:{1} reason:{2} sender:{3} ", SessionID, User, Reason, SenderO?.GetType()?.Name);
+			return string.Format("id:{0} user:{1} reason:{2} sender:{3} spent:{4}", SessionID, User, Reason, SenderO?.GetType()?.Name, Spent);
 		}
 
 		public object SenderO { get { return Sender.IsAlive ? Sender.Target : null; } }
