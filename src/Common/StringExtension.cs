@@ -31,5 +31,16 @@ namespace Atropos.Common.String
 		{
 			return string.IsNullOrWhiteSpace(value);
 		}
+
+		/// <summary>
+		/// Converts day of week to the string. 
+		/// </summary>
+		/// <param name="day">The day.</param>
+		/// <returns>First two letters</returns>
+		public static string AsString(this DayOfWeek day)
+		{
+			var d = day.ToString();
+			return d.Substring(0, 2);
+		}
     }
 }

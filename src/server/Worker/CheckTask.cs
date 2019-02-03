@@ -1,4 +1,5 @@
 ﻿using Atropos.Common;
+using Atropos.Common.String;
 using Atropos.Server.Db;
 using Atropos.Server.Factory;
 using System;
@@ -31,7 +32,7 @@ namespace Atropos.Server.Worker
 			var user = _st.GetUser(login);
 			var curFews = _st.GetUserCurfews(user);
 
-			var day = date.DayOfWeek.ToString();
+			var day = date.DayOfWeek.AsString();
 
 			return Check(curFews, day, usage);
 		}
@@ -42,7 +43,7 @@ namespace Atropos.Server.Worker
 			if (curfew != null)
 			{
 				if (curfew.Time < usage.Used)
-					return new UsageResult { Kind = UsageResultKind.NoRestriction, Used = usage.Used };
+					return new UsageResult { Kind = UsageResultKind.Blocked, Used = usage.Used };
 
 				// not enough data to understand how many time passed since user started to use the computer
 				//if (curfew.Break > TimeSpan.Zero)

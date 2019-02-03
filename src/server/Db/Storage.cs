@@ -47,7 +47,7 @@ namespace Atropos.Server.Db
 			return GetUsage(login, date);
 		}
 
-		public UsageLog GetUsage(string login, DateTime date)
+		public virtual UsageLog GetUsage(string login, DateTime date)
 		{
 			var usage = from ul in db.UsageLogs
 						join u in db.Users on ul.UserId equals u.Id
@@ -73,7 +73,7 @@ namespace Atropos.Server.Db
 			return db.Curfews.Single(_ => _.Id == value.Id);
 		}
 
-		public IEnumerable<Curfew> GetUserCurfews(User user)
+		public virtual IEnumerable<Curfew> GetUserCurfews(User user)
 		{
 			return db.Curfews.Where(_ => _.UserId == user.Id);
 		}
@@ -84,7 +84,7 @@ namespace Atropos.Server.Db
 			return GetUser(login);
 		}
 
-		public User GetUser(string login)
+		public virtual User GetUser(string login)
 		{
 			var user = db.Users.LoadWith(_ => _.Curfews).Single(_ => _.Login == login);
 
