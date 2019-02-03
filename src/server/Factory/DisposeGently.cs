@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Factory
 {
+	/// <summary>
+	/// abstract <see cref="DisposeIt"/> allows derived classes to dispose resource
+	/// </summary>
+	/// <seealso cref="System.IDisposable" />
 	public abstract class DisposeGently : IDisposable
 	{
 		#region IDisposable Support

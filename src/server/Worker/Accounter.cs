@@ -11,6 +11,11 @@ using System.Text;
 
 namespace Atropos.Server.Worker
 {
+	/// <summary>
+	/// accepts session data events <see cref="Changed(SessionData)"/> and saves them to the database using <see cref="Run"/> method
+	/// </summary>
+	/// <seealso cref="Atropos.Server.Factory.BackgroundTask" />
+	/// <seealso cref="System.IDisposable" />
 	public class Accounter : BackgroundTask, IDisposable
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
