@@ -1,6 +1,7 @@
 ﻿using Atropos.Common.Logging;
 using Atropos.Server.Db;
 using Atropos.Server.Event;
+using Atropos.Server.Factory;
 using Atropos.Server.Worker;
 using System;
 using System.Collections.Generic;
@@ -11,27 +12,29 @@ using Topshelf;
 
 namespace Atropos.Server
 {
+	/// <summary>
+	/// service class to start all listeners and counters
+	/// </summary>
+	/// <seealso cref="Topshelf.ServiceControl" />
+	/// <seealso cref="Topshelf.ServiceSessionChange" />
 	public class ServiceImpl : ServiceControl, ServiceSessionChange
 	{
-		Woodpecker _listener;
 		ServiceOptions _options;
 		Accounter _accounter;
 		StorageTool _stTool;
 
+		IList<BackgroundTask> _tasks;
+
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public ServiceImpl(ServiceOptions options, Woodpecker listener, Accounter accounter, StorageTool stTool)
+		public ServiceImpl(ServiceOptions options, Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
 		{
-			_listener = listener;
-			_listener.OnFound += session_OnFound;
+			listener.OnFound += data => _accounter.Changed(data);
 			_options = options;
 			_accounter = accounter;
 			_stTool = stTool;
-		}
 
-		private void session_OnFound(SessionData data)
-		{
-			_accounter.Changed(data);
+			_tasks = new List<BackgroundTask>() { listener, accounter, locker };
 		}
 
 		public bool Start(HostControl hostControl)
@@ -41,8 +44,7 @@ namespace Atropos.Server
 			{
 				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
 
-				_listener.Start(_options.Name);
-				_accounter.Start();
+				DoAllTasks(_tasks, t =>	t.Start());
 			}
 			catch (Exception e)
 			{
@@ -53,12 +55,24 @@ namespace Atropos.Server
 			return true;
 		}
 
+		void DoAllTasks(IEnumerable<BackgroundTask> tasks, Action<BackgroundTask> dotask)
+		{
+			foreach (var t in tasks)
+				try
+				{
+					dotask(t);
+				}
+				catch (Exception e)
+				{
+					throw new ApplicationException(string.Format("failed to do task {0}", t.GetType().Name), e);
+				}
+		}
+
 		public bool Stop(HostControl hostControl)
 		{
 			Log.Debug("stopping");
 
-			_listener.Stop();
-			_accounter.Stop();
+			DoAllTasks(_tasks, t => t.Stop());
 
 			Log.Trace("stopped");
 			return true;

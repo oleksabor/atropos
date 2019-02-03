@@ -26,6 +26,8 @@ namespace Atropos.Server.Factory
 		/// </value>
 		public bool RunOnStop { get; protected set; }
 
+		public abstract void Start();
+
 		/// <summary>
 		/// Starts to execute the <see cref="Run"/> method with pause between.
 		/// </summary>

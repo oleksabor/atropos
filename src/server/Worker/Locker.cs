@@ -27,10 +27,13 @@ namespace Atropos.Server.Worker
 			State = state;
 		}
 
-		public void Start()
+		public override void Start()
 		{
 			base.Start(30);
 		}
+
+		DayOfWeek LoggedBlocked;
+		string LoggedUser;
 
 		public override void Run()
 		{
@@ -45,7 +48,11 @@ namespace Atropos.Server.Worker
 				switch (res.Kind)
 				{
 					case UsageResultKind.Blocked:
-						Log.WarnFormat("{0} used computer for {1}", sd.User, res.Used);
+						var day = DateTime.Today.DayOfWeek;
+						if ((LoggedBlocked == default(DayOfWeek) || LoggedBlocked != day) && !sd.User.Equals(LoggedUser, StringComparison.OrdinalIgnoreCase))
+							Log.WarnFormat("{0} used computer for {1}", sd.User, res.Used);
+						LoggedBlocked = day;
+						LoggedUser = sd.User;
 						break;
 				}
 			}

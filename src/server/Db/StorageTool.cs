@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Db
 {
+	/// <summary>
+	/// checks database before start
+	/// </summary>
 	public class StorageTool
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();

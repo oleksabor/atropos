@@ -106,7 +106,7 @@ namespace Atropos.Server.Worker
 			}
 		}
 
-		public void Start()
+		public override void Start()
 		{
 			base.Start(10);
 		}

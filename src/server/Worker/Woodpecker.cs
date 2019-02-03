@@ -19,7 +19,7 @@ namespace Atropos.Server.Worker
 			_status = status;
 		}
 
-		public void Start(string name)
+		public override void Start()
 		{
 			base.Start(15);
 		}
