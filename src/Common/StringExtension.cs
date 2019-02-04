@@ -73,7 +73,7 @@ namespace Atropos.Common.String
 							var start = Parse(range[0]);
 							var end = Parse(range[1]);
 							if (start >= end)
-								throw new ArgumentException($"start:${start} should be less than end:${end} value");
+								throw new ArgumentException($"start:{start} should be less than end:{end} value");
 
 							if (day >= start && day <= end)
 								return true;
@@ -100,7 +100,7 @@ namespace Atropos.Common.String
 		{
 			value = value.Trim();
 			if (value.Length != 1)
-				throw new ArgumentException($"unexpected value'${value}' length");
+				throw new ArgumentException($"unexpected value:{value}' length");
 			return int.Parse(value);
 		}
 	}
