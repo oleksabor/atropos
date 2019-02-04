@@ -37,7 +37,7 @@ namespace Atropos.Server.Worker
 
 		public override void Run()
 		{
-			var sd = State.GetCurrent();
+			var sd = State.GetCurrent(this);
 			if (sd == null || sd.User.IsEmpty() || sd.IsLocked)
 				return;
 
@@ -56,6 +56,12 @@ namespace Atropos.Server.Worker
 						break;
 				}
 			}
+		}
+
+		internal void ResetLog()
+		{
+			LoggedBlocked = default(DayOfWeek);
+			LoggedUser = null;
 		}
 	}
 }

@@ -26,10 +26,12 @@ namespace Atropos.Server.Worker
 			switch (data.Reason)
 			{
 				case Kind.Connected: // nothing to log here since user has just logged in
-					//_storage.AddUsage(data.User, TimeSpan.Zero, today);
+				case Kind.Locked:
+				case Kind.Unknown: 
+				case Kind.Disconnected: 
 					break;
-				case Kind.Unknown: // session is active seems that event was sent from woodpecker
-				case Kind.Disconnected: // to save time from last Store call
+
+				case Kind.Active:
 					Save(data);
 					break;
 			}
@@ -42,7 +44,7 @@ namespace Atropos.Server.Worker
 			using (var t = _storage.BeginTransaction())
 				try
 				{
-					Log.DebugFormat("saving usage {0} {1}", data.User, data.Spent.TotalSeconds);
+					Log.DebugFormat("saving usage {0} {1} reason:{2}", data.User, data.Spent.TotalSeconds, data.Reason);
 					_storage.AddUsage(data.User, data.Spent, today);
 					t.Commit();
 				}

@@ -11,5 +11,7 @@ namespace Atropos.Server.Event
 		Connected,
 		Disconnected,
 		Unknown,
+		Locked,
+		Active,
 	}
 }

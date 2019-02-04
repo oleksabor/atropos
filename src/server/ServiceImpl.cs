@@ -27,13 +27,15 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
+		public Locker Locker { get; }
+
 		public ServiceImpl(ServiceOptions options, Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_options = options;
 			_accounter = accounter;
 			_stTool = stTool;
-
+			Locker = locker;
 			_tasks = new List<BackgroundTask>() { listener, accounter, locker };
 		}
 
@@ -78,10 +80,44 @@ namespace Atropos.Server
 			return true;
 		}
 
-		public void SessionChange(HostControl hostControl, SessionChangedArguments changedArguments)
+		public bool Pause(HostControl hostControl)
 		{
-			var sid = (uint)changedArguments.SessionId;
-			_accounter.Changed(new SessionData(sid, changedArguments.ReasonCode.ToKind(), this) { User = SessionInformation.GetUsernameBySessionId(sid, false) });
+			Log.Trace("pause");
+			return Stop(hostControl);
+		}
+
+		public bool Continue(HostControl hostControl)
+		{
+			Log.Trace("continue");
+			return Start(hostControl);
+		}
+
+		public void SessionChange(HostControl hostControl, SessionChangedArguments args)
+		{
+			var sid = (uint)args.SessionId;
+			var kind = Kind.Unknown;
+
+			switch (args.ReasonCode)
+			{
+				// Kind.Active to store latest active time span when user ends work
+				case SessionChangeReasonCode.ConsoleDisconnect:
+				case SessionChangeReasonCode.RemoteDisconnect:
+				case SessionChangeReasonCode.SessionLock:
+				case SessionChangeReasonCode.SessionLogoff:
+					kind = Kind.Active;
+					break;
+				// Kind.Connected to reset Accounter and start watching for user time since connected state
+				case SessionChangeReasonCode.ConsoleConnect:
+				case SessionChangeReasonCode.RemoteConnect:
+				case SessionChangeReasonCode.SessionLogon:
+				case SessionChangeReasonCode.SessionUnlock:
+					kind = Kind.Connected;
+					break;
+			}
+			if (kind != Kind.Unknown)
+				_accounter.Changed(new SessionData(sid, kind, this) { User = SessionInformation.GetUsernameBySessionId(sid, false) });
+
+			Locker.ResetLog();
 		}
 	}
 }

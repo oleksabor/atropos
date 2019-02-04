@@ -32,6 +32,7 @@ namespace Atropos.Server
 					Configure(container);
 
 					x.EnableSessionChanged();
+					x.EnablePauseAndContinue();
 					x.Service(_ =>
 					{
 						container.Configure(c => c.For<ServiceOptions>().Use(new ServiceOptions { Name = _.ServiceName }));

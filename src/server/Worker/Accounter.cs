@@ -59,9 +59,9 @@ namespace Atropos.Server.Worker
 		{
 			var quit = false;
 			if (data.IsLocked)
-				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.SenderO));
+				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.Sender));
 			if ("SYSTEM".Equals(data.User, StringComparison.OrdinalIgnoreCase) || data.User.IsEmpty())
-				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.SenderO));
+				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.Sender));
 
 			if (quit)
 				return;

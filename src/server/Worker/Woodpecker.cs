@@ -26,7 +26,7 @@ namespace Atropos.Server.Worker
 
 		public override void Run()
 		{
-			var sd = _status.GetCurrent();
+			var sd = _status.GetCurrent(this);
 			if (sd != null)
 				OnFound?.Invoke(sd);
 		}
