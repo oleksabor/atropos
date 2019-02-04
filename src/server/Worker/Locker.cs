@@ -22,17 +22,19 @@ namespace Atropos.Server.Worker
 
 		public SessionStatus State { get; }
 		public ScreenBlock Blocker { get; }
+		public Settings Config { get; }
 
-		public Locker(Instance factory, SessionStatus state, ScreenBlock blocker)
+		public Locker(Instance factory, SessionStatus state, ScreenBlock blocker, Settings config)
 		{
 			_instance = factory;
 			State = state;
 			Blocker = blocker;
+			Config = config;
 		}
 
 		public override void Start()
 		{
-			base.Start(30);
+			base.Start(Config.Interval.Locker);
 		}
 
 		DayOfWeek LoggedBlocked;

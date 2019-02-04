@@ -22,12 +22,12 @@ namespace Atropos.Server.Worker
 		Instance _instance;
 		MarkerBool _marker;
 
-		public Accounter(Instance factory, MarkerBool marker)
+		public Accounter(Instance factory, MarkerBool marker, Settings config)
 		{
 			_instance = factory;
 			_items = new ConcurrentQueue<SessionData>();
 			_marker = marker;
-
+			Config = config;
 			RunOnStop = true; // to save cached events
 		}
 
@@ -41,6 +41,7 @@ namespace Atropos.Server.Worker
 		public void Changed(SessionData data)
 		{
 			var milliseconds = TimeSpan.FromMilliseconds(_watch.Value.ElapsedMilliseconds);
+			_watch.Value.Restart();
 
 			if (Stopping)
 			{
@@ -49,10 +50,8 @@ namespace Atropos.Server.Worker
 			}
 
 			data.Spent = milliseconds;
-
 			Add(data);
 
-			_watch.Value.Restart();
 		}
 
 		public void Add(SessionData data)
@@ -94,6 +93,9 @@ namespace Atropos.Server.Worker
 		}
 
 		private bool notDisposed = true;
+
+		public Settings Config { get; }
+
 		public void Dispose()
 		{
 			if (notDisposed)
@@ -108,7 +110,7 @@ namespace Atropos.Server.Worker
 
 		public override void Start()
 		{
-			base.Start(10);
+			base.Start(Config.Interval.Accounter);
 		}
 
 		public override void Run()

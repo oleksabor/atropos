@@ -14,14 +14,17 @@ namespace Atropos.Server.Worker
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 		SessionStatus _status;
 
-		public Woodpecker(SessionStatus status)
+		public Settings Config { get; }
+
+		public Woodpecker(SessionStatus status, Settings config)
 		{
 			_status = status;
+			Config = config;
 		}
 
 		public override void Start()
 		{
-			base.Start(15);
+			base.Start(Config.Interval.Woodpecker);
 		}
 
 		public override void Run()
