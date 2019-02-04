@@ -75,7 +75,7 @@ namespace Atropos.Server.Db
 
 		public virtual IEnumerable<Curfew> GetUserCurfews(User user)
 		{
-			return db.Curfews.Where(_ => _.UserId == user.Id);
+			return db.Curfews.Where(_ => _.UserId == user.Id).ToList();
 		}
 
 		public User AddUser(string login, string name)
