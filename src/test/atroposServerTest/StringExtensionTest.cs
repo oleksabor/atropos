@@ -22,7 +22,7 @@ namespace atroposServerTest.Common
 		[TestCase]
 		public void CheckWeekDayStringSingle()
 		{
-			CheckWeekDay("1", new[] { 1 }, new[] { 0, 2, 3, 4, 5, 6, 7 });
+			CheckWeekDay("1", new[] { 1 }, new[] { 0, 2, 3, 4, 5, 6 });
 		}
 
 		void CheckWeekDay(string weekDayString, int[] match, int[] nomatch)
@@ -36,19 +36,19 @@ namespace atroposServerTest.Common
 		[TestCase]
 		public void CheckWeekDayStringSetOf()
 		{
-			CheckWeekDay("1, 3, 5", new[] { 3, 1, 5 }, new[] { 0, 2, 4, 6, 7 });
+			CheckWeekDay("1, 3, 5", new[] { 3, 1, 5 }, new[] { 0, 2, 4, 6 });
 		}
 
 		[TestCase]
 		public void CheckWeekDayStringRange()
 		{
-			CheckWeekDay("1 - 5", new[] { 1, 2, 3, 4, 5 }, new[] { 0, 6, 7 });
+			CheckWeekDay("1 - 5", new[] { 1, 2, 3, 4, 5 }, new[] { 0, 6 });
 		}
 
 		[TestCase]
 		public void CheckWeekDayStringRangeSetOf()
 		{ 
-			CheckWeekDay("0, 2-4, 6", new[] { 3, 0, 6, 2, 4 }, new[] { 7, 5, 1 });
+			CheckWeekDay("0, 2-4, 6", new[] { 3, 0, 6, 2, 4 }, new[] { 5, 1 });
 		}
 
 		[TestCase]
