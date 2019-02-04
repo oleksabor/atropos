@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atropos.Common.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;
@@ -10,6 +11,8 @@ namespace Atropos.Server.Event
 {
 	public static class SessionChangeExtension
 	{
+		static ILog Log = LogProvider.GetCurrentClassLogger();
+
 		public static SessionChangeReasonCode ToCode(this SessionChangeReason value)
 		{
 			switch (value)
@@ -42,7 +45,9 @@ namespace Atropos.Server.Event
 				case SessionChangeReasonCode.SessionLogoff:
 				case SessionChangeReasonCode.SessionLock:
 					return Kind.Disconnected;
-				default: return Kind.Unknown;
+				default:
+					Log.WarnFormat("unknown session state {0}", value);
+					return Kind.Unknown;
 			}
 		}
 	}

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Factory
 {
+	/// <summary>
+	/// IoC container wrapper. Can create child container <see cref="Child"/> and resolve instances <see cref="Create{T}"/>
+	/// </summary>
+	/// <seealso cref="System.IDisposable" />
 	public class Instance : IDisposable
 	{
 		IContainer _container;

@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\ScreenBlock.cs" />
     <Compile Include="Worker\Accounter.cs" />
     <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
@@ -88,6 +89,9 @@
     <Compile Include="Db\UsageLog.cs" />
     <Compile Include="Db\User.cs" />
     <Compile Include="Event\Kind.cs" />
+    <Compile Include="Worker\CheckTask.cs" />
+    <Compile Include="Worker\Locker.cs" />
+    <Compile Include="Worker\SessionStatus.cs" />
     <Compile Include="Worker\Woodpecker.cs" />
     <Compile Include="Event\SessionChangeExtension.cs" />
     <Compile Include="Event\SessionData.cs" />

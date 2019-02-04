@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest
+namespace atroposServerTest.Db
 {
 	/// <summary>
 	/// this test creates db 

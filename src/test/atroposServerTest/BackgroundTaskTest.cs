@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace atroposServerTest
+namespace atroposServerTest.Factory
 {
 	[TestFixture]
 	public class BackgroundTaskTest

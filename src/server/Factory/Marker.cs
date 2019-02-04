@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Factory
 {
+	/// <summary>
+	/// holds a data by string key, thread safe. <seealso cref="System.Collections.Concurrent.ConcurrentDictionary{TKey, TValue}"/>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class Marker<T>
 	{
 		ConcurrentDictionary<string, T> _items = new ConcurrentDictionary<string, T>();
@@ -27,6 +31,10 @@ namespace Atropos.Server.Factory
 		}
 	}
 
+	/// <summary>
+	/// holds bool data for string key
+	/// </summary>
+	/// <seealso cref="Atropos.Server.Factory.Marker{System.Boolean}" />
 	public class MarkerBool : Marker<bool>
 	{ }
 }
