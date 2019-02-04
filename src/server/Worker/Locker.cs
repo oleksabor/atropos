@@ -1,6 +1,7 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Logging;
 using Atropos.Common.String;
+using Atropos.Server.Event;
 using Atropos.Server.Factory;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,13 @@ namespace Atropos.Server.Worker
 		Instance _instance;
 
 		public SessionStatus State { get; }
+		public ScreenBlock Blocker { get; }
 
-		public Locker(Instance factory, SessionStatus state)
+		public Locker(Instance factory, SessionStatus state, ScreenBlock blocker)
 		{
 			_instance = factory;
 			State = state;
+			Blocker = blocker;
 		}
 
 		public override void Start()
@@ -50,12 +53,20 @@ namespace Atropos.Server.Worker
 					case UsageResultKind.Blocked:
 						var day = DateTime.Today.DayOfWeek;
 						if ((LoggedBlocked == default(DayOfWeek) || LoggedBlocked != day) && !sd.User.Equals(LoggedUser, StringComparison.OrdinalIgnoreCase))
-							Log.WarnFormat("{0} used computer for {1}", sd.User, res.Used);
+						{
+							Log.WarnFormat("{0} used computer for {1}, locking", sd.User, res.Used);
+							Lock(sd);
+						}
 						LoggedBlocked = day;
 						LoggedUser = sd.User;
 						break;
 				}
 			}
+		}
+
+		public void Lock(SessionData sd)
+		{
+			Blocker.Disconnect(sd.SessionID);
 		}
 
 		internal void ResetLog()

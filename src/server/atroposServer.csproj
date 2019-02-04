@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\ScreenBlock.cs" />
     <Compile Include="Worker\Accounter.cs" />
     <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
