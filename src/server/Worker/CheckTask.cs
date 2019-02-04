@@ -48,7 +48,7 @@ namespace Atropos.Server.Worker
 		/// <returns>Usage result variable with Kind allowed to proceed or not</returns>
 		public UsageResult Check(IEnumerable<Curfew> curFews, int day, UsageLog usage)
 		{
-			var curfew = curFews.OrderBy(_ => _.Time).FirstOrDefault(_ => IsWeekDay(_.WeekDay, day));
+			var curfew = curFews.OrderBy(_ => _.Time).FirstOrDefault(_ => _.WeekDay.IsWeekDay(day, Log));
 			if (curfew != null)
 			{
 				if (curfew.Time < usage.Used)
@@ -63,66 +63,6 @@ namespace Atropos.Server.Worker
 				//}
 			}
 			return new UsageResult { Kind = UsageResultKind.NoRestriction, Used = usage.Used };
-		}
-
-		/// <summary>
-		/// Determines whether day parameter value matches to the specified week day string.
-		/// </summary>
-		/// <param name="weekDayString">The week day string.</param>
-		/// <param name="day">The day.</param>
-		/// <returns>
-		///   <c>true</c> if day parameter value matches the specified week day string; otherwise, <c>false</c>.
-		/// </returns>
-		/// <exception cref="System.ArgumentException">
-		/// no value - weekDayString
-		/// or
-		/// failed to parse week day string '{weekDayString}
-		/// </exception>
-		public bool IsWeekDay(string weekDayString, int day)
-		{
-			if (weekDayString.IsEmpty())
-				throw new ArgumentException("no value", nameof(weekDayString));
-
-			var days = weekDayString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (var d in days)
-				try
-				{
-					var range = d.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
-					switch (range.Length)
-					{
-						case 2:
-							var start = Parse(range[0]);
-							var end = Parse(range[1]);
-							if (start >= end)
-								throw new ArgumentException($"start:${start} should be less than end:${end} value");
-
-							if (day >= start && day <= end)
-								return true;
-
-							break;
-						case 1:
-							var singleDay = Parse(range[0]);
-							if (singleDay == day)
-								return true;
-							break;
-						default:
-							Log.WarnFormat("unknown range:{0} from weekDay:{1}", range, weekDayString);
-							break;
-					}
-				}
-				catch (FormatException fe)
-				{
-					throw new ArgumentException($"failed to parse week day string '{weekDayString}'", fe);
-				}
-			return false;
-		}
-
-		int Parse(string value)
-		{
-			value = value.Trim();
-			if (value.Length != 1)
-				throw new ArgumentException($"unexpected value'${value}' length");
-			return int.Parse(value);
 		}
 
 		public override void DisposeIt()

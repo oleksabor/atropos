@@ -103,65 +103,6 @@ namespace atroposServerTest.Worker
 			Assert.AreEqual(UsageResultKind.Blocked, res.Kind);
 		}
 
-		[TestCase]
-		public void CheckWeekDayStringSingle()
-		{
-			var ct = new CheckTask(null);
-
-			CheckWeekDay(ct, "1", new[] { 1 }, new[] { 0, 2, 3, 4, 5, 6, 7 });
-		}
-
-		void CheckWeekDay(CheckTask ct, string weekDayString, int[] match, int[] nomatch)
-		{
-			foreach (var m in match)
-				Assert.IsTrue(ct.IsWeekDay(weekDayString, m));
-			foreach (var m in nomatch)
-				Assert.IsFalse(ct.IsWeekDay(weekDayString, m));
-		}
-
-		[TestCase]
-		public void CheckWeekDayStringSetOf()
-		{
-			var ct = new CheckTask(null);
-			CheckWeekDay(ct, "1, 3, 5", new[] { 3, 1, 5 }, new[] { 0, 2, 4, 6, 7 });
-		}
-
-		[TestCase]
-		public void CheckWeekDayStringRange()
-		{
-			var ct = new CheckTask(null);
-			CheckWeekDay(ct, "1 - 5", new[] { 1, 2, 3, 4, 5 }, new[] { 0, 6, 7 });
-		}
-
-		[TestCase]
-		public void CheckWeekDayStringRangeSetOf()
-		{
-			var ct = new CheckTask(null);
-			CheckWeekDay(ct, "0, 2-4, 6", new[] { 3, 0, 6, 2, 4 }, new[] { 7, 5, 1 });
-		}
-
-		[TestCase]
-		public void CheckWeekDayEmptyString()
-		{
-			var ct = new CheckTask(null);
-			Assert.Throws<ArgumentException>(() => ct.IsWeekDay(null, 1));
-		}
-
-		[TestCase]
-		public void CheckWeekDayCharactersString()
-		{
-			var ct = new CheckTask(null);
-			Assert.Throws<ArgumentException>(() => ct.IsWeekDay("asdf", 1));
-		}
-
-		[TestCase]
-		public void CheckWeekDayMailformedString()
-		{
-			var ct = new CheckTask(null);
-			Assert.Throws<ArgumentException>(() => ct.IsWeekDay("21", 21));
-			Assert.Throws<ArgumentException>(() => ct.IsWeekDay("21-24", 22));
-		}
-
 		User GetUser() { return new User { Login = "test" }; }
 		UsageLog GetUsageLog(User user, TimeSpan used) { return new UsageLog { Date = DateTime.Today, User = user, UserId = user.Id, Used = used }; }
 
