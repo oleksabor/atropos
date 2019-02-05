@@ -22,7 +22,7 @@ It was built using packages below
 * StructureMap as DI container
 * Topshelf to run as Windows service
 
-[0.2-beta](./releases/tag/v0.2-beta) service version is ready. It can read db parameterization and lock current user session if curfew is exceeded. 
+0.2.2 service version is ready. It can read db parameterization and lock current user session if curfew is exceeded. 
 
 #### installation
 You have to 

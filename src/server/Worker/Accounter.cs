@@ -51,14 +51,22 @@ namespace Atropos.Server.Worker
 
 			data.Spent = milliseconds;
 			Add(data);
-
 		}
 
 		public void Add(SessionData data)
 		{
-			var quit = false;
-			if (data.IsLocked)
-				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.Sender));
+			var quit = data.Spent == TimeSpan.Zero;
+			if (data.Reason == Kind.Locked)
+				quit |= LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.Sender));
+			if (data.Reason == Kind.Connected)
+			{
+				quit |= true;
+				Log.TraceFormat("session was connected, ignoring. sender:{0}", data.Sender);
+			}
+
+			if (!quit && data.User.IsEmpty())
+				data.User = SessionInformation.GetUsernameBySessionId(data.SessionID, false);
+
 			if ("SYSTEM".Equals(data.User, StringComparison.OrdinalIgnoreCase) || data.User.IsEmpty())
 				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.Sender));
 
@@ -66,6 +74,8 @@ namespace Atropos.Server.Worker
 				return;
 
 			_marker.Clear();
+			if (data.Reason != Kind.Active) // like Connected
+				Log.TraceFormat("adding session data reason:{0} spent:{1}", data.Reason, data.Spent);
 			_items.Enqueue(data);
 		}
 

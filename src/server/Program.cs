@@ -37,14 +37,20 @@ namespace Atropos.Server
 						var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 						if (lines.Length > 1)
 							message = lines[0];
-						Log.ErrorFormat("failed to start service '{0}'", message);
+						Log.ErrorFormat("failed to startrun a service '{0}'", message);
 					});
 
 					Configure(container);
 
 					x.EnableSessionChanged();
 					x.EnablePauseAndContinue();
-					x.Service<ServiceImpl>(s => s.ConstructUsingStructureMap());
+					x.Service<ServiceImpl>(s => 
+					{
+						s.ConstructUsingStructureMap();
+						s.WhenSessionChanged((impl, host, sessionArgs) => impl.SessionChange(host, sessionArgs));
+						s.WhenPaused((impl, host) => impl.Pause(host));
+						s.WhenContinued((impl, host) => impl.Continue(host));
+					} );
 
 					x.RunAsPrompt()
 							.DependsOnEventLog()

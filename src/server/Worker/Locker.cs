@@ -70,11 +70,5 @@ namespace Atropos.Server.Worker
 		{
 			Blocker.Disconnect(sd.SessionID);
 		}
-
-		internal void ResetLog()
-		{
-			LoggedBlocked = default(DayOfWeek);
-			LoggedUser = null;
-		}
 	}
 }

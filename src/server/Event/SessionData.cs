@@ -15,7 +15,7 @@ namespace Atropos.Server.Event
 		public Kind Reason { get; internal set; }
 		WeakReference SenderObject;
 
-		public bool IsLocked { get; set; }
+		public bool IsLocked => Reason == Kind.Locked;
 
 		public TimeSpan Spent { get; set; }
 
