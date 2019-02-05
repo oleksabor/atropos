@@ -21,9 +21,9 @@ namespace Atropos.Server.Db
 
 		Data db;
 
-		public StorageTool(Data data)
+		public StorageTool(IData data) // IData to use named db configuration string 
 		{
-			db = data;
+			db = (Data)data; // casted to Data not to expose all linq2db inner properties
 		}
 
 		Regex dbNameRegex = new Regex(@"Data\s+Source=(?<n>.+)");
