@@ -16,11 +16,10 @@ namespace Atropos.Server.Worker
 			if (sessionId < SessionInformation.NoSession)
 			{
 				var sd = new SessionData(sessionId, Kind.Unknown, sender);
-				sd.User = SessionInformation.GetUsernameBySessionId(sessionId, false);
 
 				var state = SessionInformation.GetSessionLockState(sessionId);
-				sd.IsLocked = state == SessionInformation.LockState.Locked;
-				if (sd.IsLocked)
+				var isLocked = state == SessionInformation.LockState.Locked;
+				if (isLocked)
 					sd.Reason = Kind.Locked;
 				else
 					sd.Reason = Kind.Active;

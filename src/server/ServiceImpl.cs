@@ -26,14 +26,11 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public Locker Locker { get; }
-
 		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_accounter = accounter;
 			_stTool = stTool;
-			Locker = locker;
 			_tasks = new List<BackgroundTask>() { listener, accounter, locker };
 		}
 
@@ -114,8 +111,6 @@ namespace Atropos.Server
 			}
 			if (kind != Kind.Unknown)
 				_accounter.Changed(new SessionData(sid, kind, this) { User = SessionInformation.GetUsernameBySessionId(sid, false) });
-
-			Locker.ResetLog();
 		}
 	}
 }
