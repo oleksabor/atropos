@@ -19,7 +19,6 @@ namespace Atropos.Server
 	/// <seealso cref="Topshelf.ServiceSessionChange" />
 	public class ServiceImpl : ServiceControl, ServiceSessionChange
 	{
-		ServiceOptions _options;
 		Accounter _accounter;
 		StorageTool _stTool;
 
@@ -29,10 +28,9 @@ namespace Atropos.Server
 
 		public Locker Locker { get; }
 
-		public ServiceImpl(ServiceOptions options, Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
+		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
-			_options = options;
 			_accounter = accounter;
 			_stTool = stTool;
 			Locker = locker;
@@ -41,7 +39,7 @@ namespace Atropos.Server
 
 		public bool Start(HostControl hostControl)
 		{
-			Log.DebugFormat("starting service:{0}", _options.Name);
+			Log.DebugFormat("starting service");
 			try
 			{
 				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
