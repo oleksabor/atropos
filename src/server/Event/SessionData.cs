@@ -13,7 +13,7 @@ namespace Atropos.Server.Event
 		public string Domain { get; set; }
 		public string User { get; set; }
 		public Kind Reason { get; internal set; }
-		WeakReference Sender;
+		WeakReference SenderObject;
 
 		public bool IsLocked { get; set; }
 
@@ -21,17 +21,17 @@ namespace Atropos.Server.Event
 
 		public override string ToString()
 		{
-			return string.Format("id:{0} user:{1} reason:{2} sender:{3} spent:{4}", SessionID, User, Reason, SenderO?.GetType()?.Name, Spent);
+			return string.Format("id:{0} user:{1} reason:{2} sender:{3} spent:{4}", SessionID, User, Reason, Sender?.GetType()?.Name, Spent);
 		}
 
-		public object SenderO { get { return Sender.IsAlive ? Sender.Target : null; } }
+		public object Sender { get { return SenderObject.IsAlive ? SenderObject.Target : null; } set { SenderObject = new WeakReference(value); } }
 
 		public SessionData(uint id, Kind code, object sender)
 		{
 			SessionID = id;
 			Reason = code;
 
-			Sender = new WeakReference(sender);
+			Sender = sender;
 		}
 	}
 }

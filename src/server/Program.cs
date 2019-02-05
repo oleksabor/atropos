@@ -1,4 +1,5 @@
 ﻿using Atropos.Common.Logging;
+using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
 using StructureMap;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Topshelf;
 using Topshelf.LibLog;
+using Topshelf.ServiceConfigurators;
 using Topshelf.StructureMap;
 
 namespace Atropos.Server
@@ -26,17 +28,23 @@ namespace Atropos.Server
 				{
 					x.UseLibLog();
 					x.UseAssemblyInfoForServiceInfo();
+					x.UnhandledExceptionPolicy = Topshelf.Runtime.UnhandledExceptionPolicyCode.LogErrorAndStopService;
 
 					x.UseStructureMap(container);
+					x.OnException(_ =>
+					{
+						var message = _.Message;
+						var lines = message.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+						if (lines.Length > 1)
+							message = lines[0];
+						Log.ErrorFormat("failed to start service '{0}'", message);
+					});
 
 					Configure(container);
 
 					x.EnableSessionChanged();
-					x.Service(_ =>
-					{
-						container.Configure(c => c.For<ServiceOptions>().Use(new ServiceOptions { Name = _.ServiceName }));
-						return container.GetInstance<ServiceImpl>();
-					});
+					x.EnablePauseAndContinue();
+					x.Service<ServiceImpl>(s => s.ConstructUsingStructureMap());
 
 					x.RunAsPrompt()
 							.DependsOnEventLog()
@@ -56,6 +64,8 @@ namespace Atropos.Server
 					a.AssemblyContainingType<Atropos.Server.Db.IData>();
 					a.WithDefaultConventions();
 				});
+
+				_.For<IData>().Use(() => new Data("Db")).AlwaysUnique();
 			});
 		}
 	}

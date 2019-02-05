@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atropos.Common.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -9,6 +10,8 @@ namespace Atropos.Server.Event
 {
 	public class SessionInformation
 	{
+		static ILog Log = LogProvider.GetCurrentClassLogger();
+
 		[DllImport("Wtsapi32.dll")]
 		static extern bool WTSQuerySessionInformation(
 			System.IntPtr hServer, uint sessionId, WtsInfoClass wtsInfoClass, out System.IntPtr ppBuffer, out uint pBytesReturned);
@@ -210,12 +213,18 @@ namespace Atropos.Server.Event
 			);
 
 			if (!result)
+			{
+				Log.DebugFormat("no WTSQuerySessionInformation session:{0}", session_id);
 				return LockState.Unknown;
+			}
 
 			var session_info_ex = Marshal.PtrToStructure<WTSINFOEX>(ppBuffer);
 
 			if (session_info_ex.Level != 1)
+			{
+				Log.DebugFormat("no session_info_ex.Level session:{0}", session_id);
 				return LockState.Unknown;
+			}
 
 			var lock_state = session_info_ex.Data.WTSInfoExLevel1.SessionFlags;
 			WTSFreeMemoryEx(WTS_TYPE_CLASS.WTSTypeSessionInfoLevel1, ppBuffer, pBytesReturned);

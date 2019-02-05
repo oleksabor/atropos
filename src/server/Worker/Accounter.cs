@@ -11,18 +11,23 @@ using System.Text;
 
 namespace Atropos.Server.Worker
 {
+	/// <summary>
+	/// accepts session data events <see cref="Changed(SessionData)"/> and saves them to the database using <see cref="Run"/> method
+	/// </summary>
+	/// <seealso cref="Atropos.Server.Factory.BackgroundTask" />
+	/// <seealso cref="System.IDisposable" />
 	public class Accounter : BackgroundTask, IDisposable
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 		Instance _instance;
 		MarkerBool _marker;
 
-		public Accounter(Instance factory, MarkerBool marker)
+		public Accounter(Instance factory, MarkerBool marker, Settings config)
 		{
 			_instance = factory;
 			_items = new ConcurrentQueue<SessionData>();
 			_marker = marker;
-
+			Config = config;
 			RunOnStop = true; // to save cached events
 		}
 
@@ -36,6 +41,7 @@ namespace Atropos.Server.Worker
 		public void Changed(SessionData data)
 		{
 			var milliseconds = TimeSpan.FromMilliseconds(_watch.Value.ElapsedMilliseconds);
+			_watch.Value.Restart();
 
 			if (Stopping)
 			{
@@ -44,19 +50,17 @@ namespace Atropos.Server.Worker
 			}
 
 			data.Spent = milliseconds;
-
 			Add(data);
 
-			_watch.Value.Restart();
 		}
 
 		public void Add(SessionData data)
 		{
 			var quit = false;
 			if (data.IsLocked)
-				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.SenderO));
+				quit = LogOnce(_marker, "loggerLocked", () => Log.TraceFormat("session is locked, ignoring. sender:{0}", data.Sender));
 			if ("SYSTEM".Equals(data.User, StringComparison.OrdinalIgnoreCase) || data.User.IsEmpty())
-				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.SenderO));
+				quit |= LogOnce(_marker, "systemLocked", () => Log.TraceFormat("no user data (system), ignoring. sender:{0}", data.Sender));
 
 			if (quit)
 				return;
@@ -89,6 +93,9 @@ namespace Atropos.Server.Worker
 		}
 
 		private bool notDisposed = true;
+
+		public Settings Config { get; }
+
 		public void Dispose()
 		{
 			if (notDisposed)
@@ -101,9 +108,9 @@ namespace Atropos.Server.Worker
 			}
 		}
 
-		public void Start()
+		public override void Start()
 		{
-			base.Start(10);
+			base.Start(Config.Interval.Accounter);
 		}
 
 		public override void Run()

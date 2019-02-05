@@ -12,15 +12,18 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Db
 {
+	/// <summary>
+	/// checks database before start
+	/// </summary>
 	public class StorageTool
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
 		Data db;
 
-		public StorageTool(Data data)
+		public StorageTool(IData data) // IData to use named db configuration string 
 		{
-			db = data;
+			db = (Data)data; // casted to Data not to expose all linq2db inner properties
 		}
 
 		Regex dbNameRegex = new Regex(@"Data\s+Source=(?<n>.+)");

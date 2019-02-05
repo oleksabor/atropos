@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace atroposServerTest
+namespace atroposServerTest.Db
 {
 	/// <summary>
 	/// this test requires actual db to be created

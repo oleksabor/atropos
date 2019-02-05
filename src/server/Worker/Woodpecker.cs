@@ -12,26 +12,26 @@ namespace Atropos.Server.Worker
 	public class Woodpecker : BackgroundTask
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
+		SessionStatus _status;
 
-		public void Start(string name)
+		public Settings Config { get; }
+
+		public Woodpecker(SessionStatus status, Settings config)
 		{
-			base.Start(15);
+			_status = status;
+			Config = config;
+		}
+
+		public override void Start()
+		{
+			base.Start(Config.Interval.Woodpecker);
 		}
 
 		public override void Run()
 		{
-			var sessionId = SessionInformation.GetSession();
-			if (sessionId < SessionInformation.NoSession)
-			{
-				var reason = default(SessionChangeReason);
-				var sd = new SessionData(sessionId, reason.ToCode().ToKind(), this);
-				sd.User = SessionInformation.GetUsernameBySessionId(sessionId, false);
-
-				var state = SessionInformation.GetSessionLockState(sessionId);
-				sd.IsLocked = state == SessionInformation.LockState.Locked;
-
+			var sd = _status.GetCurrent(this);
+			if (sd != null)
 				OnFound?.Invoke(sd);
-			}
 		}
 
 		public event SessionFound OnFound;
