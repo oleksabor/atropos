@@ -16,6 +16,8 @@ if ($platform -ne 'x86' -and $platform -ne 'x64') {
 $platform = $platformDefault 
 }
 
+& .\setAssemblyInfo.ps1 $version $path
+
 $solution = "$path\\accountTimer.sln"
 #$msb = ${env:programfiles(x86)}+'\MSBuild\14.0\Bin\msbuild.exe'
 
@@ -26,5 +28,16 @@ $msb = ${env:programfiles(x86)}+'\Microsoft Visual Studio\2017\Professional\MSBu
 
 if (-Not $?) { Throw New-Object System.ArgumentException([string]::Format("failed to build {0}", $lastexitcode))}
 'build was finished'
+
+$msb = ${env:programfiles(x86)}+'\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe'
+
+$platformPath = ""
+if ($platform -ne $platformDefault) { $platformPath = $platform }
+
+$a7z = ${env:programfiles}+'\7-zip\7z.exe'
+$archName = "..\bin\atropos_$configuration.$version.7z"
+$includePath = "$path\server\bin\$platformPath\$configuration\*"
+& $a7z a $archName $includePath -m0=LZMA  '-xr!*.log' '-xr!*.tmp'
+
 
 
