@@ -12,7 +12,10 @@ namespace Atropos.Server.Db
 	public class User
 	{
 		[PrimaryKey, Identity]	public int Id { get; set; }
-		[Column]				public string Login { get; set; }
+
+		[Column(CreateFormat = "{0} {1} {2} {3} COLLATE NOCASE")]
+		public string Login { get; set; }
+
 		[Column]				public string Name { get; set; }
 
 		[Association(ThisKey = "Id", OtherKey = "UserId")]
