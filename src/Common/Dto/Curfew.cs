@@ -13,11 +13,11 @@ namespace Atropos.Common.Dto
 	[XmlRoot(Namespace = Ns + "/curfew")]
 	public class Curfew : IdDto
 	{
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public int UserId { get; set; }
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public string WeekDay { get; set; }
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public TimeSpan Time { get; set; }
 		[DataMember]
 		public TimeSpan Break { get; set; }

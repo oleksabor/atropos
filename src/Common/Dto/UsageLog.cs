@@ -12,13 +12,13 @@ namespace Atropos.Common.Dto
 	[XmlRoot(Namespace = Ns + "/usageLog")]
 	public class UsageLog : IdDto
 	{
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public int UserId { get; set; }
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public TimeSpan Used { get; set; }
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public TimeSpan Started { get; set; }
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public DateTime Date { get; set; }
 	}
 }

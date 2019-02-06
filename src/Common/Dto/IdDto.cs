@@ -9,10 +9,9 @@ namespace Atropos.Common.Dto
 {
 	public class IdDto
 	{
+		public const string Ns = "https://github.com/oleksabor/Atropos/dto";
 
-		public const string Ns = "http://nowhere.com/Atropos/dto";
-
-		[DataMember]
+		[DataMember(IsRequired = true)]
 		public int Id { get; set; }
 	}
 }
