@@ -14,7 +14,7 @@ namespace com.Tools.WcfHosting
 	/// <summary>
 	/// helper class to start WCF service host
 	/// </summary>
-	/// <seealso cref="Quipu.Tools.WcfHosting.IWcfHost" />
+	/// <seealso cref="com.Tools.WcfHosting.IWcfHost" />
 	public class WcfHosting : IWcfHost
 	{
 		object _syncRoot = new object();

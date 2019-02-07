@@ -18,8 +18,6 @@ namespace com.Tools.WcfHosting
 	public class WcfClient<TRemoteInterface> : IDisposable
 	{
 		protected ChannelFactory<TRemoteInterface> _channel;
-		protected TRemoteInterface _proxy;
-
 		IServiceCommunicationSettings _settings;
 		static ILog _log = LogProvider.GetCurrentClassLogger();
 
@@ -30,6 +28,8 @@ namespace com.Tools.WcfHosting
 		/// The URL.
 		/// </value>
 		public string Url { get { return GetSettings().Host.Uri; } }
+
+		public TRemoteInterface Proxy { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WcfClient{TRemoteInterface}"/> class.
@@ -63,6 +63,13 @@ namespace com.Tools.WcfHosting
 				}
 		}
 
+		public void Connect()
+		{
+			OpenChannel();
+			if (Proxy == null)
+				throw new ArgumentNullException(nameof(Proxy), "no remote connection proxy value");
+		}
+
 		/// <summary>
 		/// Opens the channel if no one was opened.
 		/// </summary>
@@ -85,7 +92,7 @@ namespace com.Tools.WcfHosting
 				var endpoint = new EndpointAddress(settings.Host.Uri);
 				_channel = new ChannelFactory<TRemoteInterface>(binding, endpoint);
 				_channel.Open();
-				_proxy = _channel.CreateChannel(endpoint);
+				Proxy = _channel.CreateChannel(endpoint);
 			}
 		}
 
@@ -116,7 +123,7 @@ namespace com.Tools.WcfHosting
 			{
 				OpenChannel();
 
-				return getResult(_proxy);
+				return getResult(Proxy);
 			}
 			catch (Exception ex)
 			{
@@ -136,7 +143,7 @@ namespace com.Tools.WcfHosting
 			{
 				OpenChannel();
 
-				setValue(_proxy);
+				setValue(Proxy);
 			}
 			catch (Exception ex)
 			{
