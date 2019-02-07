@@ -35,12 +35,15 @@
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.bsUser = new System.Windows.Forms.BindingSource(this.components);
 			this.bsCurfew = new System.Windows.Forms.BindingSource(this.components);
-			this.dataGridView2 = new System.Windows.Forms.DataGridView();
+			this.gvCurfew = new System.Windows.Forms.DataGridView();
+			this.colCFWeekDay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colCFTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colCFBreak = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.toolStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.bsUser)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.bsCurfew)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.gvCurfew)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// toolStrip1
@@ -74,22 +77,44 @@
 			this.dataGridView1.Size = new System.Drawing.Size(800, 425);
 			this.dataGridView1.TabIndex = 1;
 			// 
-			// dataGridView2
+			// gvCurfew
 			// 
-			this.dataGridView2.AutoGenerateColumns = false;
-			this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView2.DataSource = this.bsCurfew;
-			this.dataGridView2.Location = new System.Drawing.Point(8, 33);
-			this.dataGridView2.Name = "dataGridView2";
-			this.dataGridView2.Size = new System.Drawing.Size(240, 150);
-			this.dataGridView2.TabIndex = 2;
+			this.gvCurfew.AutoGenerateColumns = false;
+			this.gvCurfew.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.gvCurfew.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colCFWeekDay,
+            this.colCFTime,
+            this.colCFBreak});
+			this.gvCurfew.DataSource = this.bsCurfew;
+			this.gvCurfew.Location = new System.Drawing.Point(8, 33);
+			this.gvCurfew.Name = "gvCurfew";
+			this.gvCurfew.Size = new System.Drawing.Size(780, 175);
+			this.gvCurfew.TabIndex = 2;
+			// 
+			// colCFWeekDay
+			// 
+			this.colCFWeekDay.DataPropertyName = "WeekDay";
+			this.colCFWeekDay.HeaderText = "week day";
+			this.colCFWeekDay.Name = "colCFWeekDay";
+			// 
+			// colCFTime
+			// 
+			this.colCFTime.DataPropertyName = "Time";
+			this.colCFTime.HeaderText = "time";
+			this.colCFTime.Name = "colCFTime";
+			// 
+			// colCFBreak
+			// 
+			this.colCFBreak.DataPropertyName = "Break";
+			this.colCFBreak.HeaderText = "break";
+			this.colCFBreak.Name = "colCFBreak";
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
-			this.Controls.Add(this.dataGridView2);
+			this.Controls.Add(this.gvCurfew);
 			this.Controls.Add(this.dataGridView1);
 			this.Controls.Add(this.toolStrip1);
 			this.Name = "Form1";
@@ -99,7 +124,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.bsUser)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.bsCurfew)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.gvCurfew)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -113,7 +138,10 @@
 		private System.Windows.Forms.ToolStripComboBox cbUsers;
 		private System.Windows.Forms.BindingSource bsUser;
 		private System.Windows.Forms.BindingSource bsCurfew;
-		private System.Windows.Forms.DataGridView dataGridView2;
+		private System.Windows.Forms.DataGridView gvCurfew;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colCFWeekDay;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colCFTime;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colCFBreak;
 	}
 }
 

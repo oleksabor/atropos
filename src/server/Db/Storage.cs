@@ -91,6 +91,11 @@ namespace Atropos.Server.Db
 			return user;
 		}
 
+		public virtual IEnumerable<User> GetUsers()
+		{
+			return db.Users.ToArray();
+		}
+
 		public override void DisposeIt()
 		{
 			db.Dispose();

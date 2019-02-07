@@ -15,6 +15,12 @@ namespace Atropos.Common.Dto
 	{
 		[DataMember]
 		public string Login { get; set; }
+		[DataMember]
 		public string Name { get; set; }
+
+		public override string ToString()
+		{
+			return $"{Login} (aka {Name}";
+		}
 	}
 }

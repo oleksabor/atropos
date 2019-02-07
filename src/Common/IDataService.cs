@@ -14,8 +14,8 @@ namespace Atropos.Common
 		[OperationContract]
 		User[] GetUsers();
 		[OperationContract]
-		Curfew[] GetCurfews(int userId);
+		Curfew[] GetCurfews(string login);
 		[OperationContract]
-		UsageLog[] GetUsageLog(int userId);
+		UsageLog GetUsageLog(string login, DateTime date);
 	}
 }

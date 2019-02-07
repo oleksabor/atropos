@@ -15,10 +15,13 @@ namespace Atropos.Common.Dto
 	{
 		[DataMember(IsRequired = true)]
 		public int UserId { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public string WeekDay { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public TimeSpan Time { get; set; }
+
 		[DataMember]
 		public TimeSpan Break { get; set; }
 	}

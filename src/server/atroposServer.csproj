@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event\ScreenBlock.cs" />
+    <Compile Include="Listener\Mapper.cs" />
     <Compile Include="Listener\DataService.cs" />
     <Compile Include="Listener\DataServiceHost.cs" />
     <Compile Include="Worker\Accounter.cs" />

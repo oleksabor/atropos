@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Atropos.Common.Dto
 {
+	[DataContract(Namespace = Ns)]
 	public class IdDto
 	{
 		public const string Ns = "https://github.com/oleksabor/Atropos/dto";
