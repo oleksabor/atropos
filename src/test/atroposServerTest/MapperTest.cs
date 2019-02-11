@@ -1,4 +1,6 @@
-﻿using Atropos.Server.Listener;
+﻿using Atropos.Server.Db;
+using Atropos.Server.Listener;
+using LinqToDB.Mapping;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -44,11 +46,20 @@ namespace atroposServerTest.Listener
 			Assert.AreEqual(source.Period, dest.Period);
 
 		}
+
+		[TestCase]
+		public void MapUsageLog()
+		{
+			var mapper = new Mapper<UsageLog, Atropos.Common.Dto.UsageLog>();
+			
+			var dto = mapper.Map(new UsageLog { Id = 12, Used = TimeSpan.FromSeconds(99) });
+			Assert.AreEqual(12, dto.Id);
+		}
 	}
 
 	public class SourceType
 	{
-		public int Id;
+		[PrimaryKey, Identity] public int Id;
 		public string Name { get; set; }
 		public TimeSpan Period { get; set; }
 	}

@@ -1,4 +1,5 @@
 ﻿using Atropos.Server.Db;
+using Atropos.Server.Factory;
 using Atropos.Server.Listener;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -19,7 +20,9 @@ namespace atroposServerTest.Listener
 			var data = MockRepository.Mock<IData>();
 			var st = MockRepository.Mock<Storage>(data);
 			st.Expect(_ => _.GetUsers()).Returns(() => new[] { new User { Id = 1, Login = "1login", Name = "1 name" } }).Repeat.Once();
-			var ds = new DataService(st);
+			var factory = MockRepository.Mock<IInstance>();
+			factory.Expect(_ => _.Create<Storage>()).Return(st);
+			var ds = new DataService(factory);
 
 			var users = ds.GetUsers();
 

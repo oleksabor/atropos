@@ -1,4 +1,5 @@
-﻿using Atropos.Common.String;
+﻿using Atropos.Common.Logging;
+using Atropos.Common.String;
 using Atropos.Server.Factory;
 using LinqToDB;
 using System;
@@ -16,6 +17,7 @@ namespace Atropos.Server.Db
 	public class Storage : DisposeGently
 	{
 		IData db;
+		static ILog Log = LogProvider.GetCurrentClassLogger();
 
 		public Storage(IData data)
 		{
@@ -44,17 +46,19 @@ namespace Atropos.Server.Db
 				_ => new UsageLog { Used = _.Used + value }, 
 				() => new UsageLog { Date = date, UserId = user.Id });
 
-			return GetUsage(login, date);
+			return GetUsage(login, date).LastOrDefault();
 		}
 
-		public virtual UsageLog GetUsage(string login, DateTime date)
+		public virtual IEnumerable<UsageLog> GetUsage(string login, DateTime date)
 		{
 			var usage = from ul in db.UsageLogs
 						join u in db.Users on ul.UserId equals u.Id
 						where ul.Date == date 
 						&& u.Login == login
 						select ul;
-			return usage.FirstOrDefault();
+			if (!usage.Any())
+				Log.WarnFormat("no usage found for user:{0} on date:{1}", login, date);
+			return usage;
 		}
 
 		public Curfew AddCurfew(string login, TimeSpan time, TimeSpan breakTime, string weekDay)

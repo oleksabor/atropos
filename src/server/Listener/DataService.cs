@@ -1,5 +1,7 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Dto;
+using Atropos.Common.Logging;
+using Atropos.Server.Factory;
 using com.Tools.WcfHosting.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,15 +16,22 @@ namespace Atropos.Server.Listener
 	[InjectLogBehavior]
 	public class DataService : IDataService
 	{
-		public DataService(Db.Storage storage)
+		static ILog Log = LogProvider.GetCurrentClassLogger();
+
+		public DataService(IInstance instanceFactory)
 		{
-			Storage = storage;
 			mapCurfew = new Mapper<Db.Curfew, Curfew>();
 			mapUser = new Mapper<Db.User, User>();
 			mapUsageLog = new Mapper<Db.UsageLog, UsageLog>();
+			InstanceFactory = instanceFactory;
 		}
 
-		public Db.Storage Storage { get; }
+		Db.Storage Storage()
+		{
+			return InstanceFactory.Create<Db.Storage>();
+		}
+
+		public IInstance InstanceFactory { get; }
 
 		private Mapper<Db.Curfew, Curfew> mapCurfew;
 		private Mapper<Db.User, User> mapUser;
@@ -30,18 +39,30 @@ namespace Atropos.Server.Listener
 
 		public Curfew[] GetCurfews(string login)
 		{
-			return mapCurfew.Map(Storage.GetUserCurfews(Storage.GetUser(login))).ToArray();
+			using (var st = Storage())
+			{
+				var user = st.GetUser(login);
+				var curfews = user.Curfews;
+				if (!curfews.Any())
+					Log.WarnFormat("no user:{0} curfews where found", login);
+				return mapCurfew.Map(curfews).ToArray();
+			}
 		}
 
-		public UsageLog GetUsageLog(string login, DateTime date)
+		public UsageLog[] GetUsageLog(string login, DateTime date)
 		{
-			return mapUsageLog.Map(Storage.GetUsage(login, date));
+			using (var st = Storage())
+				return mapUsageLog.Map(st.GetUsage(login, date)).ToArray();
 		}
 
 		public User[] GetUsers()
 		{
-			var users = Storage.GetUsers();
-			return mapUser.Map(users).ToArray();
+			using (var st = Storage())
+			{
+				var users = st.GetUsers();
+				var res = mapUser.Map(users).ToArray();
+				return res;
+			}
 		}
 	}
 }

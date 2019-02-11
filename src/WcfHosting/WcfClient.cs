@@ -29,7 +29,7 @@ namespace com.Tools.WcfHosting
 		/// </value>
 		public string Url { get { return GetSettings().Host.Uri; } }
 
-		public TRemoteInterface Proxy { get; set; }
+		internal TRemoteInterface Proxy { get; set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="WcfClient{TRemoteInterface}"/> class.
@@ -46,28 +46,24 @@ namespace com.Tools.WcfHosting
 		/// </summary>
 		public void Dispose()
 		{
-			if (_channel != null)
-				try
-				{
-					var ch = _channel;
-					_channel = null;
-
-					if (ch.State == CommunicationState.Opened)
-						ch.Close();
-					else
-						ch.Abort();
-				}
-				catch (Exception e)
-				{
-					_log.ErrorException("failed to dispose channel", e);
-				}
+			AbortChanel();
 		}
 
-		public void Connect()
+		public TRemoteInterface Connect()
 		{
+			if (_channel != null)
+				if (_channel.State != CommunicationState.Opened)
+					AbortChanel();
+
 			OpenChannel();
 			if (Proxy == null)
 				throw new ArgumentNullException(nameof(Proxy), "no remote connection proxy value");
+			return Proxy;
+		}
+
+		public void Disconnect()
+		{
+			AbortChanel();
 		}
 
 		/// <summary>
@@ -96,10 +92,25 @@ namespace com.Tools.WcfHosting
 			}
 		}
 
-		protected void AbortChanel(Exception ex)
+		protected void AbortChanel()
 		{
 			_log.WarnFormat("Aborting chanel '{0}'", Url);
-			Dispose();
+			if (_channel != null)
+				try
+				{
+					Proxy = default(TRemoteInterface);
+					var ch = _channel;
+					_channel = null;
+
+					if (ch.State == CommunicationState.Opened)
+						ch.Close();
+					else
+						ch.Abort();
+				}
+				catch (Exception e)
+				{
+					_log.ErrorException("failed to dispose channel", e);
+				}
 		}
 
 		/// <summary>
@@ -128,7 +139,7 @@ namespace com.Tools.WcfHosting
 			catch (Exception ex)
 			{
 				_log.Error(() => string.Format("failed to get message {0}", ex.Message));
-				AbortChanel(ex);
+				AbortChanel();
 				throw;
 			}
 		}
@@ -148,7 +159,7 @@ namespace com.Tools.WcfHosting
 			catch (Exception ex)
 			{
 				_log.Error(() => string.Format("failed to set message {0}", ex.Message));
-				AbortChanel(ex);
+				AbortChanel();
 				throw;
 			}
 		}

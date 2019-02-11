@@ -10,25 +10,57 @@ namespace client.Data
 {
 	public class DataLoader : PropertyChangedBase
 	{
-		public DataLoader(IDataService service)
+		public DataLoader(Func<IDataService> service, Action disconnect)
 		{
 			Service = service;
-			Users = new DataItems<User>(() => Service.GetUsers());
-			UsageLog = new DataItem<UsageLog>(() => Service.GetUsageLog(SelectedUser?.Login, Date));
-			Curfews = new DataItems<Curfew>(() => Service.GetCurfews(SelectedUser?.Login));
+			Disconnect = disconnect;
+			Users = new DataItems<User>(LoadUsers);
+			UsageLog = new DataItems<UsageLog>(() => DoOrDisconnect(() => Service().GetUsageLog(SelectedUser?.Login, Date)));
+			Curfews = new DataItems<Curfew>(() => DoOrDisconnect(() => Service().GetCurfews(SelectedUser?.Login)));
+			Date = DateTime.Today;
 		}
+
+		T DoOrDisconnect<T>(Func<T> a)
+		{
+			try
+			{
+				return a();
+			}
+			catch (Exception)
+			{
+				Disconnect();
+				throw;
+			}
+		}
+
+		IEnumerable<User> LoadUsers()
+		{
+			return DoOrDisconnect(() => Service().GetUsers());
+		}
+
 		public DateTime Date { get; set; }
 
 		public DataItems<User> Users { get; set; }
 
-		public DataItem<UsageLog> UsageLog { get; set; }
+		public DataItems<UsageLog> UsageLog { get; set; }
 
 		public DataItems<Curfew> Curfews { get; set; }
 
 		private User _user;
-		public User SelectedUser { get { return _user; } set { Set(ref _user, value); } }
+		public User SelectedUser
+		{
+			get { return _user; }
+			set
+			{
+				if (Set(ref _user, value))
+				{
+					Curfews.LoadAsync();
+					UsageLog.LoadAsync();
+				}
+			}
+		}
 
-		public IDataService Service { get; }
-
+		public Func<IDataService> Service { get; }
+		public Action Disconnect { get; }
 	}
 }

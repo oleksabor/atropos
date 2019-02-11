@@ -95,12 +95,17 @@
     <Compile Include="DisposeGentlyTest.cs" />
     <Compile Include="MapperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyChangedBaseTest.cs" />
     <Compile Include="SetupDbTest.cs" />
     <Compile Include="StorageDbTest.cs" />
     <Compile Include="StorageToolTest.cs" />
     <Compile Include="StringExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\client\client.csproj">
+      <Project>{6fa2dd61-0ad8-4bd1-bd14-f58f7c2ab7a9}</Project>
+      <Name>client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{01e61dbd-3943-490d-bdfe-abef4944ce04}</Project>
       <Name>Common</Name>

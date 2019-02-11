@@ -29,9 +29,18 @@ namespace Atropos.Server.Listener
 			foreach (var mmDst in destAccessor.Members)
 				if (mmDst.HasSetter)
 				{
+					object value = null;
 					var mmSrc = sourceAccessor[mmDst.Name];
-					if (mmSrc != null && mmSrc.HasGetter)
-						mmDst.SetValue(dst, mmSrc.GetValue(src));
+					if (src != null && mmSrc != null && mmSrc.HasGetter)
+						try
+						{
+							value = mmSrc.GetValue(src);
+							mmDst.SetValue(dst, value);
+						}
+						catch (Exception e)
+						{
+							throw new ArgumentException($"failed to set property:{sourceAccessor.Type}.{mmSrc.Name} to {destAccessor.Type}.{mmDst.Name} value:{value}", e);
+						}
 				}
 			return dst;
 		}

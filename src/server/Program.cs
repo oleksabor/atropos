@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Topshelf;
 using Topshelf.LibLog;
 using Topshelf.ServiceConfigurators;
-using Topshelf.StructureMap;
 
 namespace Atropos.Server
 {
@@ -31,7 +30,6 @@ namespace Atropos.Server
 					x.UseAssemblyInfoForServiceInfo();
 					x.UnhandledExceptionPolicy = Topshelf.Runtime.UnhandledExceptionPolicyCode.LogErrorAndStopService;
 
-					x.UseStructureMap(container);
 					x.OnException(_ =>
 					{
 						var message = _.Message;
@@ -45,13 +43,8 @@ namespace Atropos.Server
 
 					x.EnableSessionChanged();
 					x.EnablePauseAndContinue();
-					x.Service<ServiceImpl>(s => 
-					{
-						s.ConstructUsingStructureMap();
-						s.WhenSessionChanged((impl, host, sessionArgs) => impl.SessionChange(host, sessionArgs));
-						s.WhenPaused((impl, host) => impl.Pause(host));
-						s.WhenContinued((impl, host) => impl.Continue(host));
-					} );
+
+					x.Service(_ => container.GetInstance<ServiceImpl>());
 
 					x.RunAsPrompt()
 							.DependsOnEventLog()
@@ -75,6 +68,7 @@ namespace Atropos.Server
 				_.For<IData>().Use(() => new Data("Db")).AlwaysUnique();
 				_.For<IWcfHost>().Use<WcfHosting>();
 				_.For<CommunicationSettings>().Use(context => new CommunicationSettings { Host = new EndpointSettings { Uri = "net.pipe://localhost/atropos", Binding = "atropos_binding" } });
+				_.For<Instance>().Singleton();
 				});
 		}
 	}

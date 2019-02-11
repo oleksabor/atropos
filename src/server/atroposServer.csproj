@@ -74,9 +74,6 @@
     <Reference Include="Topshelf.LibLog, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Topshelf.LibLog.1.2.0\lib\net40\Topshelf.LibLog.dll</HintPath>
     </Reference>
-    <Reference Include="Topshelf.StructureMap, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Topshelf.StructureMap.0.5.1\lib\net452\Topshelf.StructureMap.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event\ScreenBlock.cs" />

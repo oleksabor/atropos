@@ -18,9 +18,9 @@ namespace client.Data
 
 		protected Func<T> LoadData;
 
-		public async void Load()
+		public Task LoadAsync()
 		{
-			await Task.Run(() => AssignValue());
+			return Task.Run(() => AssignValue());
 		}
 
 		void AssignValue()
@@ -37,11 +37,11 @@ namespace client.Data
 			}
 		}
 
-		private T _usageLog;
+		private T _v;
 		public T Value
 		{
-			get { return _usageLog; }
-			set { Set(ref _usageLog, value); }
+			get { return _v; }
+			set { Set(ref _v, value); }
 		}
 	}
 
