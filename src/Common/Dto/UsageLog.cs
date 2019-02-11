@@ -14,10 +14,13 @@ namespace Atropos.Common.Dto
 	{
 		[DataMember(IsRequired = true)]
 		public int UserId { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public TimeSpan Used { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public TimeSpan Started { get; set; }
+
 		[DataMember(IsRequired = true)]
 		public DateTime Date { get; set; }
 	}

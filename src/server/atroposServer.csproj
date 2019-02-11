@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -73,12 +74,12 @@
     <Reference Include="Topshelf.LibLog, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Topshelf.LibLog.1.2.0\lib\net40\Topshelf.LibLog.dll</HintPath>
     </Reference>
-    <Reference Include="Topshelf.StructureMap, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Topshelf.StructureMap.0.5.1\lib\net452\Topshelf.StructureMap.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event\ScreenBlock.cs" />
+    <Compile Include="Listener\Mapper.cs" />
+    <Compile Include="Listener\DataService.cs" />
+    <Compile Include="Listener\DataServiceHost.cs" />
     <Compile Include="Worker\Accounter.cs" />
     <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
@@ -142,6 +143,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{01e61dbd-3943-490d-bdfe-abef4944ce04}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WcfHosting\WcfHosting.csproj">
+      <Project>{fd6664c9-bef2-4760-8b35-16a85b49d218}</Project>
+      <Name>WcfHosting</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

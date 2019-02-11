@@ -120,7 +120,7 @@ namespace atroposServerTest.Worker
 			var st = MockRepository.Mock<Storage>(d);
 
 			st.Expect(_ => _.GetUser(user.Login)).Return(user);
-			st.Expect(_ => _.GetUsage(user.Login, usageLog.Date)).Return(usageLog);
+			st.Expect(_ => _.GetUsage(user.Login, usageLog.Date)).Return(new[] { usageLog });
 			st.Expect(_ => _.GetUserCurfews(user)).Return(curfews);
 
 			return st;

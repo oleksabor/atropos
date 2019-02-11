@@ -1,4 +1,5 @@
 ﻿using Atropos.Server.Db;
+using Atropos.Server.Listener;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace atroposServerTest.Db
 			var ws = DateTime.Today.DayOfWeek.ToString();
 			using (var s = new Storage(new Data()))
 			{
+				s.AddUser(Login, "test user");
 				using (var t = s.BeginTransaction())
 				{
 					c = s.AddCurfew(Login, TimeSpan.FromHours(3), TimeSpan.FromMinutes(20), ws);
@@ -112,6 +114,20 @@ namespace atroposServerTest.Db
 				Assert.AreEqual(n.Date, usage.Date);
 
 				Assert.AreEqual(s.GetUser(Login).Id, usage.UserId);
+			}
+		}
+
+		[TestCase]
+		public void MapUsageLog()
+		{
+			using (var db = new Data())
+			{
+				var usageLog = db.UsageLogs.First();
+
+				var mapper = new Mapper<UsageLog, Atropos.Common.Dto.UsageLog>();
+
+				var dto = mapper.Map(usageLog);
+				Assert.AreEqual(usageLog.Id, dto.Id);
 			}
 		}
 
