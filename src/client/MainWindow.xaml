@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:client.Wpf"
 		
-        mc:Ignorable="d" Width="740" Height="537.153" Icon="Resources/scissors.ico" Title="atropos client"
+        mc:Ignorable="d" Width="700" Height="537.153" Icon="Resources/scissors.ico" Title="atropos client"
         >
 	<Grid >
 		<Grid.RowDefinitions>
@@ -18,14 +18,10 @@
 				<ListBox ItemsSource="{Binding Users.Value}" SelectedItem="{Binding SelectedUser}" Grid.Column="1">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition/>
-									<ColumnDefinition/>
-								</Grid.ColumnDefinitions>
-								<TextBox Grid.Column="0" Margin="5" Text="{Binding Login}"/>
-								<TextBox Grid.Column="1" Margin="5" Text="{Binding Name}"/>
-							</Grid>
+							<StackPanel Orientation="Horizontal">
+								<TextBox Margin="3" Text="{Binding Login}"/>
+								<TextBox Margin="3" Text="{Binding Name}"/>
+							</StackPanel>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
@@ -75,19 +71,19 @@
 				</DataGrid.Columns>
 			</DataGrid>
 			<TextBlock  Grid.Column="1" Grid.Row="0" Text="usage log"/>
-			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False">
+			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
 					<DataGrid.Columns>
 						<DataGridTemplateColumn Header="Date" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Date}" />
+								<DatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" />
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 							</DataGridTemplateColumn>
 						<DataGridTemplateColumn Header="Started" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Started}" />
+								<TextBox Text="{Binding Started}"/>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
