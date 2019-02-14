@@ -20,9 +20,9 @@ namespace atroposServerTest.Listener
 			var data = MockRepository.Mock<IData>();
 			var st = MockRepository.Mock<Storage>(data);
 			st.Expect(_ => _.GetUsers()).Returns(() => new[] { new User { Id = 1, Login = "1login", Name = "1 name" } }).Repeat.Once();
-			var factory = MockRepository.Mock<IInstance>();
-			factory.Expect(_ => _.Create<Storage>()).Return(st);
-			var ds = new DataService(factory);
+
+
+			var ds = new DataService(st);
 
 			var users = ds.GetUsers();
 

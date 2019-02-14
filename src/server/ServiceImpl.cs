@@ -27,9 +27,9 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataServiceHost Host { get; }
+		public DataServiceHost<DataService> Host { get; }
 
-		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost host)
+		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost<DataService> host)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_accounter = accounter;

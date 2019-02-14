@@ -12,26 +12,30 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Listener
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
+	/// <summary>
+	/// class methods are not thread safe. Please ensure that class instance is not shared between threads
+	/// </summary>
+	/// <seealso cref="Atropos.Server.Factory.DisposeGently" />
+	/// <seealso cref="Atropos.Common.IDataService" />
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
 	[InjectLogBehavior]
-	public class DataService : IDataService
+	public class DataService : DisposeGently, IDataService
 	{
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataService(IInstance instanceFactory)
+		public DataService() // for WCF hosting
+		{ }
+
+		public DataService(Db.Storage db) // this is not thread safe
 		{
 			mapCurfew = new Mapper<Db.Curfew, Curfew>();
 			mapUser = new Mapper<Db.User, User>();
 			mapUsageLog = new Mapper<Db.UsageLog, UsageLog>();
-			InstanceFactory = instanceFactory;
-		}
-
-		Db.Storage Storage()
-		{
-			return InstanceFactory.Create<Db.Storage>();
+			Db = db;
 		}
 
 		public IInstance InstanceFactory { get; }
+		public Db.Storage Db { get; }
 
 		private Mapper<Db.Curfew, Curfew> mapCurfew;
 		private Mapper<Db.User, User> mapUser;
@@ -39,30 +43,28 @@ namespace Atropos.Server.Listener
 
 		public Curfew[] GetCurfews(string login)
 		{
-			using (var st = Storage())
-			{
-				var user = st.GetUser(login);
-				var curfews = user.Curfews;
-				if (!curfews.Any())
-					Log.WarnFormat("no user:{0} curfews where found", login);
-				return mapCurfew.Map(curfews).ToArray();
-			}
+			var user = Db.GetUser(login);
+			var curfews = user.Curfews;
+			if (!curfews.Any())
+				Log.WarnFormat("no user:{0} curfews where found", login);
+			return mapCurfew.Map(curfews).ToArray();
 		}
 
 		public UsageLog[] GetUsageLog(string login, DateTime date)
 		{
-			using (var st = Storage())
-				return mapUsageLog.Map(st.GetUsage(login, date)).ToArray();
+			return mapUsageLog.Map(Db.GetUsage(login, date)).ToArray();
 		}
 
 		public User[] GetUsers()
 		{
-			using (var st = Storage())
-			{
-				var users = st.GetUsers();
-				var res = mapUser.Map(users).ToArray();
-				return res;
-			}
+			var users = Db.GetUsers();
+			var res = mapUser.Map(users).ToArray();
+			return res;
+		}
+
+		public override void DisposeIt()
+		{
+			Db.Dispose();
 		}
 	}
 }

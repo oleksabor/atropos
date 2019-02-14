@@ -1,4 +1,5 @@
-﻿using com.Tools.WcfHosting.Logging;
+﻿using com.Tools.WcfHosting.Extension;
+using com.Tools.WcfHosting.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,10 +63,6 @@ namespace com.Tools.WcfHosting
 		/// <exception cref="ApplicationException"></exception>
 		public T AddHost<T>(T value, Binding binding, string url, IEnumerable<IServiceBehavior> behaviors)
 		{
-			InitializeStorage();
-
-			//log.InfoFormat("adding {0} host at {1}", value.GetType(), url);
-
 			try
 			{
 				var sh = CreateHost(value, url);
@@ -105,6 +102,32 @@ namespace com.Tools.WcfHosting
 			ServiceHost sh = new ServiceHost(type);
 
 			OpenHost(sh);
+
+
+			Add(sh);
+		}
+
+		public void AddHostType<T>(IServiceCommunicationSettings settings, IEnumerable<IServiceBehavior> customBehaviors = null)
+		{
+
+			var hostedType = typeof(T);
+			ServiceHost sh = new ServiceHost(hostedType);
+
+			var binding = GetBinding(settings);
+			var behaviors = GetBehaviors(settings);
+			if (customBehaviors != null)
+				behaviors = behaviors.Concat(customBehaviors);
+
+			var url = settings.Host.Uri;
+
+			Add(sh, behaviors);
+
+			AddServiceEndpoint<T>(url, sh, binding);
+
+			Log.InfoFormat("hosting {0} using url:{1} with binding:{2} behaviour:{3}", typeof(T), url, binding?.Name, string.Join(";", behaviors?.Select(_ => _.GetType().Name)));
+
+			OpenHost(sh);
+
 			Add(sh);
 		}
 
@@ -136,8 +159,12 @@ namespace com.Tools.WcfHosting
 
 		protected virtual void AddServiceEndpoint<T>(string url, ServiceHost sh, Binding binding)
 		{
+			var hostedType = typeof(T).GetMarked<ServiceContractAttribute>();
+			if (hostedType == default(Type))
+				throw new ArgumentException($"{typeof(T)} (or interfaces implemented) has to be marked with ServiceContractAttribute");
+
 			if (!string.IsNullOrEmpty(url))
-				sh.AddServiceEndpoint(typeof(T), binding, new Uri(url));
+				sh.AddServiceEndpoint(hostedType, binding, new Uri(url));
 		}
 
 		protected virtual void Add(ServiceHost sh, IEnumerable<IServiceBehavior> behaviors)
@@ -157,6 +184,8 @@ namespace com.Tools.WcfHosting
 
 		protected virtual void Add(ServiceHost value)
 		{
+			InitializeStorage();
+
 			lock (_syncRoot)
 				_shList.Add(value);
 		}

@@ -39,11 +39,17 @@ namespace Atropos.Server.Factory
 				_container.Dispose();
 			}
 		}
+
+		public object Create(Type type)
+		{
+			return _container.GetInstance(type);
+		}
 	}
 
 	public interface IInstance : IDisposable
 	{
 		T Create<T>();
 		IInstance Child();
+		object Create(Type type);
 	}
 }

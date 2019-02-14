@@ -9,17 +9,15 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Listener
 {
-	public class DataServiceHost : DisposeGently
+	public class DataServiceHost<T> : DisposeGently
 	{
-		public DataServiceHost(DataService value, IWcfHost host, CommunicationSettings config) 
+		public DataServiceHost(IWcfHost host, CommunicationSettings config, StructureMapServiceBehavior smap) 
 		{
-			Value = value;
 			Host = host;
 			Config = config;
-			Host.AddHost(Value, Config);
+			Host.AddHostType<T>(Config, new[] { smap });
 		}
 
-		public IDataService Value { get; }
 		public IWcfHost Host { get; }
 		public CommunicationSettings Config { get; }
 

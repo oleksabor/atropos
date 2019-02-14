@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +20,7 @@ namespace com.Tools.WcfHosting
 		/// <param name="settings">The settings.</param>
 		/// <returns></returns>
 		T AddHost<T>(T value, IServiceCommunicationSettings settings);
+		void AddHostType<T>(IServiceCommunicationSettings settings, IEnumerable<IServiceBehavior> customBehaviors = null);
 		/// <summary>
 		/// Closes the host.
 		/// </summary>
