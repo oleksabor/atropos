@@ -60,7 +60,11 @@ namespace client.Wpf
 
 			//create the notifyicon (it's a resource declared in NotifyIconResources.xaml
 			notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-			notifyIcon.DataContext = new IconViewModel(dataLoader);
+			var iconVM = new IconViewModel(dataLoader);
+			notifyIcon.DataContext = iconVM;
+
+			if (System.Diagnostics.Debugger.IsAttached)
+				iconVM.ShowWindowCommand.Execute(null);
 		}
 
 		protected override void OnExit(ExitEventArgs e)
