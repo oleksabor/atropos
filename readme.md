@@ -22,12 +22,14 @@ It was built using packages below
 * StructureMap as DI container
 * Topshelf to run as Windows service
 
-0.2.2 service version is ready. It can read db parameterization and lock current user session if curfew is exceeded. 
+service version is ready. It can read db parameterization and lock current user session if curfew is exceeded. 
 
 #### installation
 You have to 
 * [install service](https://topshelf.readthedocs.io/en/latest/overview/commandline.html#topshelf-command-line-reference) by running `atropos.server install --localsystem` from command line using elevated command prompt (Run As Administrator). This will install service that is started using built-in LocalSystem Windows account.
 * start service. If service is started first time and there is no database created it creates empty database named `AtroposData.sqlite`
+
+client executable has to be placed somewhere on the computer. When started it will show icon in the system tray area.
 
 #### configuration
 
@@ -39,7 +41,9 @@ Any SQLite tool can be used to adjust database configuration, like `DBBrowser fo
 It is ready and will lock user screen each 30 seconds if user has exceeded allowed time. I'm going to implement option to shutdown Windows if time was exceeded. 
 
 ### client
-(development is not started)
 
-This is small application that should allow to manage users that has to be restricted with curfew. 
+This is small application that shows registred users that can be restricted with curfew. Read only.
+
+![client window](doc/images/clientWindow.png)
+ 
 
