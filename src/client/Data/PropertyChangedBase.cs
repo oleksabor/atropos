@@ -10,11 +10,8 @@ namespace client.Data
 {
 	public class PropertyChangedBase : INotifyPropertyChanged
 	{
-		//public static ISync Sync = new GuiThread();
-
-		protected void RaisePropertyChanged(string name)
+		protected void RaisePropertyChanged([CallerMemberName] string name = null)
 		{
-			//Sync.Invoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 		}
 
@@ -35,18 +32,4 @@ namespace client.Data
 		void Invoke(Action a);
 	}
 
-	//public class GuiThread : ISync
-	//{
-	//	public void Invoke(Action a)
-	//	{
-	//		var forms = Application.OpenForms;
-	//		if (forms.Count > 0)
-	//		{
-	//			var form = forms[0];
-	//			form.Invoke(a);
-	//		}
-	//		else
-	//			a();
-	//	}
-	//}
 }

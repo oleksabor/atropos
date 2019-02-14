@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\CurfewGui.cs" />
     <Compile Include="Data\DataItem.cs" />
     <Compile Include="Data\DataLoader.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />

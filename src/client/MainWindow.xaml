@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:client.Wpf"
 		
-        mc:Ignorable="d"
+        mc:Ignorable="d" Width="740" Height="537.153" Icon="Resources/scissors.ico" Title="atropos client"
         >
 	<Grid >
 		<Grid.RowDefinitions>
-			<RowDefinition />
-			<RowDefinition/>
+			<RowDefinition  Height="3*"/>
+			<RowDefinition Height="7*"/>
 		</Grid.RowDefinitions>
 		<Border Grid.Row="0">
 			<StackPanel Orientation="Vertical">
@@ -33,40 +33,49 @@
 		</Border>
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="50*"/>
-				<ColumnDefinition Width="50*"/>
+				<ColumnDefinition Width="6*"/>
+				<ColumnDefinition Width="4*"/>
 			</Grid.ColumnDefinitions>
-			<StackPanel Grid.Column="0" Orientation="Vertical">
-				<TextBlock Text="curfews"/>
-				<DataGrid ItemsSource="{Binding Curfews.Value}" AutoGenerateColumns="False">
-					<DataGrid.Columns>
-						<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
+			<Grid.RowDefinitions>
+				<RowDefinition  Height="Auto"/>
+				<RowDefinition  Height="*"/>
+			</Grid.RowDefinitions>
+			<TextBlock  Grid.Column="0" Grid.Row="0" Text="curfews"/>
+			<DataGrid ItemsSource="{Binding Curfews.Value}"  Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False">
+				<DataGrid.Columns>
+					<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox Text="{Binding WeekDay}" />
+								<StackPanel Orientation="Horizontal">
+									<CheckBox IsChecked="{Binding Monday.DaySet}">Mo</CheckBox>
+									<CheckBox IsChecked="{Binding Tuesday.DaySet}">Tu</CheckBox>
+									<CheckBox IsChecked="{Binding Wednesday.DaySet}">We</CheckBox>
+									<CheckBox IsChecked="{Binding Thirsday.DaySet}">Th</CheckBox>
+									<CheckBox IsChecked="{Binding Friday.DaySet}">Fr</CheckBox>
+									<CheckBox IsChecked="{Binding Saturday.DaySet}" Foreground="Red">Sa</CheckBox>
+									<CheckBox IsChecked="{Binding Sunday.DaySet}" Foreground="Red">Su</CheckBox>
+								</StackPanel>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
-						<DataGridTemplateColumn Header="Time" Width="SizeToCells" IsReadOnly="True">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-									<TextBox Text="{Binding Time}" />
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
-						<DataGridTemplateColumn Header="Break" Width="SizeToCells" IsReadOnly="True">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-									<TextBox Text="{Binding Break}" />
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-						</DataGridTemplateColumn>
-					</DataGrid.Columns>
-				</DataGrid>
-			</StackPanel>
-			<StackPanel Grid.Column="1" Orientation="Vertical">
-				<TextBlock Text="usage log"/>
-				<DataGrid ItemsSource="{Binding UsageLog.Value}" AutoGenerateColumns="False">
+					<DataGridTemplateColumn Header="Time" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding Time}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Header="Break" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding Break}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+			<TextBlock  Grid.Column="1" Grid.Row="0" Text="usage log"/>
+			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False">
 					<DataGrid.Columns>
 						<DataGridTemplateColumn Header="Date" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
@@ -91,7 +100,6 @@
 						</DataGridTemplateColumn>
 					</DataGrid.Columns>
 				</DataGrid>
-			</StackPanel>
 		</Grid>
 	</Grid>
 </Window>

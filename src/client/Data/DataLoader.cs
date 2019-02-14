@@ -1,5 +1,6 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Dto;
+using client.Wpf.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace client.Data
 			Disconnect = disconnect;
 			Users = new DataItems<User>(LoadUsers);
 			UsageLog = new DataItems<UsageLog>(() => DoOrDisconnect(() => Service().GetUsageLog(SelectedUser?.Login, Date)));
-			Curfews = new DataItems<Curfew>(() => DoOrDisconnect(() => Service().GetCurfews(SelectedUser?.Login)));
+			Curfews = new DataItems<CurfewGui>(LoadCurfews);
 			Date = DateTime.Today;
 		}
 
@@ -38,13 +39,19 @@ namespace client.Data
 			return DoOrDisconnect(() => Service().GetUsers());
 		}
 
+		IEnumerable<CurfewGui> LoadCurfews()
+		{
+			var curfews = DoOrDisconnect(() => Service().GetCurfews(SelectedUser?.Login));
+			return curfews.Select(_ => new CurfewGui(_));
+		}
+
 		public DateTime Date { get; set; }
 
 		public DataItems<User> Users { get; set; }
 
 		public DataItems<UsageLog> UsageLog { get; set; }
 
-		public DataItems<Curfew> Curfews { get; set; }
+		public DataItems<CurfewGui> Curfews { get; set; }
 
 		private User _user;
 		public User SelectedUser
