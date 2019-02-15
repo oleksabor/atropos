@@ -78,8 +78,6 @@ namespace com.Tools.WcfHosting.Test
 			var remoteService = MockRepository.Mock<IService>();
 			var disconnected = 0;
 
-			var attempts = 0;
-
 			var ra = new RemoteAccess<IService>(() => remoteService, () => ++disconnected);
 			Assert.Throws<ApplicationException>(() => ra.CheckIsRemoteReady(_ => throw new ApplicationException("not ready yet"), 1));
 
