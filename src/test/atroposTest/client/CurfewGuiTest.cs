@@ -23,5 +23,36 @@ namespace atroposTest.Client.Gui
 			Assert.AreEqual(source.WeekDay, cg.WeekDay);
 		}
 
+		[TestCase]
+		public void DayOfWeekGetSeveral()
+		{
+			var source = new Curfew { Break = TimeSpan.FromMinutes(20), Time = TimeSpan.FromHours(2), WeekDay = "1,2,6,0" };
+			var cg = new CurfewGui(source);
+
+			Assert.IsTrue(cg.Monday.DaySet);
+			Assert.IsTrue(cg.Tuesday.DaySet);
+			Assert.IsTrue(cg.Saturday.DaySet);
+			Assert.IsTrue(cg.Sunday.DaySet);
+
+			Assert.IsFalse(cg.Wednesday.DaySet);
+			Assert.IsFalse(cg.Thursday.DaySet);
+			Assert.IsFalse(cg.Friday.DaySet);
+		}
+
+		[TestCase]
+		public void DayOfWeekGetNone()
+		{
+			var source = new Curfew { Break = TimeSpan.FromMinutes(20), Time = TimeSpan.FromHours(2) };
+			var cg = new CurfewGui(source);
+
+			Assert.IsFalse(cg.Monday.DaySet);
+			Assert.IsFalse(cg.Tuesday.DaySet);
+			Assert.IsFalse(cg.Saturday.DaySet);
+			Assert.IsFalse(cg.Sunday.DaySet);
+
+			Assert.IsFalse(cg.Wednesday.DaySet);
+			Assert.IsFalse(cg.Thursday.DaySet);
+			Assert.IsFalse(cg.Friday.DaySet);
+		}
 	}
 }
