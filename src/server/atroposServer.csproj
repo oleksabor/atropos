@@ -83,7 +83,6 @@
     <Compile Include="Listener\StructureMapInstanceProvider.cs" />
     <Compile Include="Listener\StructureMapServiceBehavior.cs" />
     <Compile Include="Worker\Accounter.cs" />
-    <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Db\Curfew.cs" />
     <Compile Include="Db\CustomMappingSchema.cs" />
     <Compile Include="Db\Data.cs" />

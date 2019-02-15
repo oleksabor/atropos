@@ -100,6 +100,19 @@ namespace Atropos.Server.Db
 			return db.Users.ToArray();
 		}
 
+		public void RemoveCurfews(string login)
+		{
+			var user = GetUser(login);
+			db.Curfews.Delete(_ => _.UserId == user.Id);
+		}
+
+		public void AddCurfews(string login, IEnumerable<Curfew> values)
+		{
+			var user = GetUser(login);
+			foreach (var value in values)
+				db.Curfews.InsertWithInt32Identity(() => new Curfew { UserId = user.Id, Break = value.Break, Time = value.Time, WeekDay = value.WeekDay });
+		}
+
 		public override void DisposeIt()
 		{
 			db.Dispose();

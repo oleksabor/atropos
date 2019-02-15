@@ -13,13 +13,6 @@ namespace client.Wpf.Data
 	{
 		IDictionary<DayOfWeek, DayOfWeekGui> _items = new Dictionary<DayOfWeek, DayOfWeekGui>();
 
-		public CurfewGui(Curfew value)
-		{
-			WeekDay = value.WeekDay;
-			Time = value.Time;
-			Break = value.Break;
-		}
-
 		public DayOfWeekGui this[DayOfWeek index]
 		{
 			get

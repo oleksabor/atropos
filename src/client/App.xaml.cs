@@ -30,6 +30,18 @@ namespace client.Wpf
 		{
 			base.OnStartup(e);
 
+			var iconVM = new IconViewModel(GetLoader);
+			//create the notifyicon (it's a resource declared in NotifyIconResources.xaml
+			notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+			notifyIcon.DataContext = iconVM;
+
+			//opens MainWindows if started from VS
+			if (System.Diagnostics.Debugger.IsAttached)
+				iconVM.ShowWindowCommand.Execute(null);
+		}
+
+		DataLoader GetLoader()
+		{
 			var config = new CommunicationSettings { Host = new EndpointSettings { Uri = "net.pipe://localhost/atropos", Binding = "atropos_binding" } };
 
 			DataService = new WcfClient<IDataService>(config);
@@ -37,15 +49,7 @@ namespace client.Wpf
 			var remoteAccess = new RemoteAccess<IDataService>(DataService.Connect, DataService.Disconnect);
 			var dataLoader = new DataLoader(remoteAccess);
 			remoteAccess.CheckIsRemoteReady(_ => dataLoader.Users.LoadAsync().Wait());
-
-			//create the notifyicon (it's a resource declared in NotifyIconResources.xaml
-			notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-			var iconVM = new IconViewModel(dataLoader);
-			notifyIcon.DataContext = iconVM;
-
-			//opens MainWindows if started from VS
-			if (System.Diagnostics.Debugger.IsAttached)
-				iconVM.ShowWindowCommand.Execute(null);
+			return dataLoader;
 		}
 
 		protected override void OnExit(ExitEventArgs e)

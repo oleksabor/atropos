@@ -17,5 +17,7 @@ namespace Atropos.Common
 		Curfew[] GetCurfews(string login);
 		[OperationContract]
 		UsageLog[] GetUsageLog(string login, DateTime date);
+		[OperationContract]
+		void SaveCurfew(Curfew[] values, string login);
 	}
 }

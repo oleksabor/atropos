@@ -11,11 +11,11 @@ namespace client.Wpf
 {
 	public class IconViewModel
 	{
-		public DataLoader Service;
+		Func<DataLoader> Factory;
 
-		public IconViewModel(DataLoader loader)
+		public IconViewModel(Func<DataLoader> factory)
 		{
-			Service = loader;
+			Factory = factory;
 		}
 
 		/// <summary>
@@ -29,6 +29,14 @@ namespace client.Wpf
 			}
 		}
 
+		public void ShowWindow()
+		{
+			var window = new MainWindow();
+			Application.Current.MainWindow = window;
+			window.DataContext = Factory();
+			Application.Current.MainWindow.Show();
+		}
+
 		public ICommand ShowWindowCommand
 		{
 			get
@@ -36,41 +44,10 @@ namespace client.Wpf
 				return new DelegateCommand
 				{
 					CanExecuteFunc = () => Application.Current.MainWindow == null,
-					CommandAction = () =>
-					{
-						var window = new MainWindow();
-						Application.Current.MainWindow = window;
-						window.DataContext = Service;
-						Application.Current.MainWindow.Show();
-					}
+					CommandAction = ShowWindow,
 				};
 			}
 		}
 
-	}
-
-	/// <summary>
-	/// Simplistic delegate command for the demo.
-	/// </summary>
-	public class DelegateCommand : ICommand
-	{
-		public Action CommandAction { get; set; }
-		public Func<bool> CanExecuteFunc { get; set; }
-
-		public void Execute(object parameter)
-		{
-			CommandAction();
-		}
-
-		public bool CanExecute(object parameter)
-		{
-			return CanExecuteFunc == null || CanExecuteFunc();
-		}
-
-		public event EventHandler CanExecuteChanged
-		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
 	}
 }

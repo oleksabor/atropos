@@ -7,6 +7,9 @@
 		
         mc:Ignorable="d" Width="700" Height="537.153" Icon="Resources/scissors.ico" Title="atropos client"
         >
+	<Window.Resources>
+		<local:TimespanConverter x:Key="ts2str" />
+	</Window.Resources>
 	<Grid >
 		<Grid.RowDefinitions>
 			<RowDefinition  Height="3*"/>
@@ -14,7 +17,7 @@
 		</Grid.RowDefinitions>
 		<Border Grid.Row="0">
 			<StackPanel Orientation="Vertical">
-				<TextBlock Text="users" Grid.Column="0"/>
+				<TextBlock Text="users" FontSize="21" Grid.Column="0"/>
 				<ListBox ItemsSource="{Binding Users.Value}" SelectedItem="{Binding SelectedUser}" Grid.Column="1">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
@@ -36,20 +39,28 @@
 				<RowDefinition  Height="Auto"/>
 				<RowDefinition  Height="*"/>
 			</Grid.RowDefinitions>
-			<TextBlock  Grid.Column="0" Grid.Row="0" Text="curfews"/>
-			<DataGrid ItemsSource="{Binding Curfews.Value}"  Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False">
+			<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical">
+				<TextBlock Text="curfews" FontSize="21"/>
+				<StackPanel Orientation="Horizontal">
+					<Button Content=" add " Margin="3" Command="{Binding AddCurfew}" />
+					<Button Content=" delete " Margin="3" Command="{Binding DelCurfew}" />
+					<Button Content=" save " Margin="3" Command="{Binding SaveCurfews}" />
+				</StackPanel>
+			</StackPanel>
+
+			<DataGrid ItemsSource="{Binding Curfews.Value}" SelectedItem="{Binding SelectedCurfew}" Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
 				<DataGrid.Columns>
 					<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
-									<CheckBox IsChecked="{Binding Monday.DaySet}">Mo</CheckBox>
-									<CheckBox IsChecked="{Binding Tuesday.DaySet}">Tu</CheckBox>
-									<CheckBox IsChecked="{Binding Wednesday.DaySet}">We</CheckBox>
-									<CheckBox IsChecked="{Binding Thirsday.DaySet}">Th</CheckBox>
-									<CheckBox IsChecked="{Binding Friday.DaySet}">Fr</CheckBox>
-									<CheckBox IsChecked="{Binding Saturday.DaySet}" Foreground="Red">Sa</CheckBox>
-									<CheckBox IsChecked="{Binding Sunday.DaySet}" Foreground="Red">Su</CheckBox>
+									<CheckBox IsChecked="{Binding Path=Monday.DaySet, UpdateSourceTrigger=PropertyChanged}">Mo</CheckBox>
+									<CheckBox IsChecked="{Binding Tuesday.DaySet, UpdateSourceTrigger=PropertyChanged}">Tu</CheckBox>
+									<CheckBox IsChecked="{Binding Wednesday.DaySet, UpdateSourceTrigger=PropertyChanged}">We</CheckBox>
+									<CheckBox IsChecked="{Binding Thursday.DaySet, UpdateSourceTrigger=PropertyChanged}">Th</CheckBox>
+									<CheckBox IsChecked="{Binding Friday.DaySet, UpdateSourceTrigger=PropertyChanged}">Fr</CheckBox>
+									<CheckBox IsChecked="{Binding Saturday.DaySet, UpdateSourceTrigger=PropertyChanged}" Foreground="Red">Sa</CheckBox>
+									<CheckBox IsChecked="{Binding Sunday.DaySet, UpdateSourceTrigger=PropertyChanged}" Foreground="Red">Su</CheckBox>
 								</StackPanel>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
@@ -57,20 +68,25 @@
 					<DataGridTemplateColumn Header="Time" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox Text="{Binding Time}" />
+								<TextBox Text="{Binding Time, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 					<DataGridTemplateColumn Header="Break" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox Text="{Binding Break}" />
+								<TextBox Text="{Binding Break, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 				</DataGrid.Columns>
 			</DataGrid>
-			<TextBlock  Grid.Column="1" Grid.Row="0" Text="usage log"/>
+			<StackPanel Grid.Column="1" Grid.Row="0"  Orientation="Vertical">
+				<TextBlock  Text="usage log" FontSize="21"/>
+				<StackPanel Orientation="Horizontal">
+					<Button Content=" refresh " Margin="3" Command="{Binding ReloadUsageLog}" />
+				</StackPanel>
+			</StackPanel>
 			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
 					<DataGrid.Columns>
 						<DataGridTemplateColumn Header="Date" Width="SizeToCells" IsReadOnly="True">
@@ -83,14 +99,14 @@
 						<DataGridTemplateColumn Header="Started" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-								<TextBox Text="{Binding Started}"/>
+								<TextBox Text="{Binding Started, Converter={StaticResource ts2str}}"/>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
 						<DataGridTemplateColumn Header="Used" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<TextBox Text="{Binding Used}" />
+								<TextBox Text="{Binding Used, Converter={StaticResource ts2str}}" />
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
