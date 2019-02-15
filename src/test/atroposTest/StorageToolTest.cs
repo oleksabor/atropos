@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Db
+namespace atroposTest.Db
 {
 	[TestFixture]
 	public class StorageToolTest

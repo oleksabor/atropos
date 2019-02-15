@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Common
+namespace atroposTest.Common
 {
 	[TestFixture]
 	public class StringExtensionTest

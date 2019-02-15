@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Listener
+namespace atroposTest.Listener
 {
 	[TestFixture]
 	public class MapperTest

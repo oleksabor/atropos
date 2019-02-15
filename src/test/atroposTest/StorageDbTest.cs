@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Db
+namespace atroposTest.Db
 {
 	/// <summary>
 	/// this test requires actual db to be created
