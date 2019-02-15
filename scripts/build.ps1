@@ -29,15 +29,38 @@ $msb = ${env:programfiles(x86)}+'\Microsoft Visual Studio\2017\Professional\MSBu
 if (-Not $?) { Throw New-Object System.ArgumentException([string]::Format("failed to build {0}", $lastexitcode))}
 'build was finished'
 
-$msb = ${env:programfiles(x86)}+'\Microsoft Visual Studio\2017\Professional\MSBuild\15.0\Bin\msbuild.exe'
-
 $platformPath = ""
 if ($platform -ne $platformDefault) { $platformPath = $platform }
 
 $a7z = ${env:programfiles}+'\7-zip\7z.exe'
 $archName = "..\bin\atropos_$configuration.$version.7z"
-$includePath = "$path\server\bin\$platformPath\$configuration\*"
-& $a7z a $archName $includePath -m0=LZMA  '-xr!*.log' '-xr!*.tmp'
 
+Class Target {
+[String] $bin # binary path
+[String] $arcPrefix
+[String] $arcName
+}
+
+$targetList=@(
+[Target]@{bin="$path\server\bin\$platformPath\$configuration\*";arcPrefix='..\bin\atroposService'}
+,[Target]@{bin="$path\client\bin\$platformPath\$configuration\*";arcPrefix='..\bin\atroposClient'}
+)
+
+For ($i=0; $i -lt $targetList.Length; $i++) {
+	'========================================'
+	'archive '+$targetList[$i].bin+ ' started'
+
+ 	$archName = $targetList[$i].arcPrefix+$configuration+'.'+$version+'.7z'
+
+	if (Test-Path $archName) { 
+		'removing '+$archName 
+		Remove-Item $archName 
+	}
+
+	& $a7z a $archName $targetList[$i].bin -m0=LZMA '-xr!*.log' '-xr!*.tmp'
+
+	$targetList[$i].arcName=[System.IO.Path]::GetFileName($archName)
+	'done '+$archName
+}
 
 

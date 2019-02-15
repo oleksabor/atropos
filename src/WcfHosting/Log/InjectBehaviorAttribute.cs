@@ -5,7 +5,7 @@ using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace com.Tools.WcfHosting.Logging
+namespace com.Tools.WcfHosting.Log
 {
 	/// <summary>
 	/// base class for behavior injection

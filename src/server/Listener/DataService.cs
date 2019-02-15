@@ -2,7 +2,7 @@
 using Atropos.Common.Dto;
 using Atropos.Common.Logging;
 using Atropos.Server.Factory;
-using com.Tools.WcfHosting.Logging;
+using com.Tools.WcfHosting.Log;
 using System;
 using System.Collections.Generic;
 using System.Linq;
