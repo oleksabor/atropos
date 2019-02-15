@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
-    <Compile Include="App_Packages\NLogIndentException0.1.6\IndentExceptionLayoutRenderer.cs" />
+    <Compile Include="App_Packages\NLogIndentException0.1.7\IndentExceptionLayoutRenderer.cs" />
     <Compile Include="Dto\Curfew.cs" />
     <Compile Include="Dto\IdDto.cs" />
     <Compile Include="Dto\UsageLog.cs" />

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Listener
+namespace atroposTest.Listener
 {
 	[TestFixture]
 	public class MapperTest
@@ -18,7 +18,21 @@ namespace atroposServerTest.Listener
 		{
 			var mapper = new Mapper<SourceType, DestType>();
 
-			var source = new SourceType { Id = 312, Name = "ababa", Period = TimeSpan.FromHours(1) };
+			var source = new SourceType { Id = 312, Name = "ababa", Period = TimeSpan.FromHours(1), NonExisitngInDest = "blabla" };
+
+			var dest = mapper.Map(source);
+
+			Assert.AreEqual(source.Id, dest.Id);
+			Assert.AreEqual(source.Name, dest.Name);
+			Assert.AreEqual(source.Period, dest.Period);
+		}
+
+		[TestCase]
+		public void MapSingleReverse()
+		{
+			var mapper = new Mapper<DestType, SourceType>();
+
+			var source = new DestType { Id = 312, Name = "ababa", Period = TimeSpan.FromHours(1) };
 
 			var dest = mapper.Map(source);
 
@@ -62,6 +76,8 @@ namespace atroposServerTest.Listener
 		[PrimaryKey, Identity] public int Id;
 		public string Name { get; set; }
 		public TimeSpan Period { get; set; }
+
+		public string NonExisitngInDest { get; set; }
 	}
 
 	public class DestType

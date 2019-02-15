@@ -1,48 +1,49 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Dto;
+using client.Wpf;
 using client.Wpf.Data;
+using com.Tools.WcfHosting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace client.Data
 {
 	public class DataLoader : PropertyChangedBase
 	{
-		public DataLoader(Func<IDataService> service, Action disconnect)
+		public DataLoader(RemoteAccess<IDataService> service)
 		{
-			Service = service;
-			Disconnect = disconnect;
 			Users = new DataItems<User>(LoadUsers);
-			UsageLog = new DataItems<UsageLog>(() => DoOrDisconnect(() => Service().GetUsageLog(SelectedUser?.Login, Date)));
+			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
 			Date = DateTime.Today;
+			Service = service;
+
+			AddCurfew = new DelegateCommand() { CommandAction = () => AddCurfewMethod(), CanExecuteFunc = () => SelectedUser != null };
+			DelCurfew = new DelegateCommand() { CommandAction = () => DelCurfewMethod(), CanExecuteFunc = () => SelectedCurfew != null };
+			SaveCurfews = new DelegateCommand() { CommandAction = () => SaveCurfewsMethod(), CanExecuteFunc = () => SelectedUser != null };
+			ReloadUsageLog = new DelegateCommand() { CommandAction = () => ReloadUsageLogMethod(), CanExecuteFunc = () => SelectedUser != null };
 		}
 
-		T DoOrDisconnect<T>(Func<T> a)
+		ObservableCollection<UsageLog> LoadUsageLog()
 		{
-			try
-			{
-				return a();
-			}
-			catch (Exception)
-			{
-				Disconnect();
-				throw;
-			}
+			var usages = Service.Perform(_ => _.GetUsageLog(SelectedUser?.Login, Date));
+			return new ObservableCollection<UsageLog>(usages);
 		}
 
-		IEnumerable<User> LoadUsers()
+		ObservableCollection<User> LoadUsers()
 		{
-			return DoOrDisconnect(() => Service().GetUsers());
+			var users = Service.Perform(_ => _.GetUsers());
+			return new ObservableCollection<User>(users);
 		}
 
-		IEnumerable<CurfewGui> LoadCurfews()
+		ObservableCollection<CurfewGui> LoadCurfews()
 		{
-			var curfews = DoOrDisconnect(() => Service().GetCurfews(SelectedUser?.Login));
-			return curfews.Select(_ => new CurfewGui(_));
+			var curfews = Service.Perform(_ => _.GetCurfews(SelectedUser?.Login));
+			return new ObservableCollection<CurfewGui>(curfews.Select(_ => _.ToGui()));
 		}
 
 		public DateTime Date { get; set; }
@@ -52,6 +53,37 @@ namespace client.Data
 		public DataItems<UsageLog> UsageLog { get; set; }
 
 		public DataItems<CurfewGui> Curfews { get; set; }
+
+		CurfewGui _selectedCurfew;
+		public CurfewGui SelectedCurfew { get { return _selectedCurfew; } set { Set(ref _selectedCurfew, value); } }
+
+		public ICommand AddCurfew { get; protected set; }
+		public void AddCurfewMethod()
+		{
+			var value = new CurfewGui();
+			Curfews.Value.Add(value);
+			SelectedCurfew = value;
+		}
+
+		public ICommand DelCurfew { get; protected set; }
+		public void DelCurfewMethod()
+		{
+			Curfews.Value.Remove(SelectedCurfew);
+			SelectedCurfew = null;
+		}
+
+		public ICommand SaveCurfews { get; protected set; }
+		public void SaveCurfewsMethod()
+		{
+			var dtos = Curfews.Value.Select(_ => _.ToDto());
+			Service.Perform(_ => _.SaveCurfew(dtos.ToArray(), SelectedUser.Login));
+		}
+
+		public ICommand ReloadUsageLog { get; protected set; }
+		public void ReloadUsageLogMethod()
+		{
+			LoadUsageLog();
+		}
 
 		private User _user;
 		public User SelectedUser
@@ -67,7 +99,6 @@ namespace client.Data
 			}
 		}
 
-		public Func<IDataService> Service { get; }
-		public Action Disconnect { get; }
+		public RemoteAccess<IDataService> Service { get; }
 	}
 }

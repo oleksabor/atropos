@@ -30,41 +30,26 @@ namespace client.Wpf
 		{
 			base.OnStartup(e);
 
+			var iconVM = new IconViewModel(GetLoader);
+			//create the notifyicon (it's a resource declared in NotifyIconResources.xaml
+			notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+			notifyIcon.DataContext = iconVM;
+
+			//opens MainWindows if started from VS
+			if (System.Diagnostics.Debugger.IsAttached)
+				iconVM.ShowWindowCommand.Execute(null);
+		}
+
+		DataLoader GetLoader()
+		{
 			var config = new CommunicationSettings { Host = new EndpointSettings { Uri = "net.pipe://localhost/atropos", Binding = "atropos_binding" } };
 
 			DataService = new WcfClient<IDataService>(config);
 			DataService.Connect();
-			var dataLoader = new DataLoader(DataService.Connect, DataService.Disconnect);
-
-			Exception startError = null;
-			var count = 0;
-			while (count < 10)
-			{
-				var t = dataLoader.Users.LoadAsync();
-
-				try
-				{
-					t.Wait();
-					count += 50;
-				}
-				catch (Exception ex)
-				{
-					Log.WarnException("failed to get users list", ex);
-					count++;
-					Thread.Sleep(500);
-					startError = ex;
-				}
-			}
-			if (count < 50)
-				throw new ApplicationException("failed to start", startError);
-
-			//create the notifyicon (it's a resource declared in NotifyIconResources.xaml
-			notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
-			var iconVM = new IconViewModel(dataLoader);
-			notifyIcon.DataContext = iconVM;
-
-			if (System.Diagnostics.Debugger.IsAttached)
-				iconVM.ShowWindowCommand.Execute(null);
+			var remoteAccess = new RemoteAccess<IDataService>(DataService.Connect, DataService.Disconnect);
+			var dataLoader = new DataLoader(remoteAccess);
+			remoteAccess.CheckIsRemoteReady(_ => dataLoader.Users.LoadAsync().Wait());
+			return dataLoader;
 		}
 
 		protected override void OnExit(ExitEventArgs e)

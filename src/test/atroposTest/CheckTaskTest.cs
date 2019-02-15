@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Worker
+namespace atroposTest.Worker
 {
 	[TestFixture]
 	public class CheckTaskTest

@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{6FA2DD61-0AD8-4BD1-BD14-F58F7C2AB7A9}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>client.Wpf</RootNamespace>
+    <RootNamespace>client</RootNamespace>
     <AssemblyName>client</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -67,11 +67,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Data\CurfewExtension.cs" />
     <Compile Include="Data\CurfewGui.cs" />
     <Compile Include="Data\DataItem.cs" />
     <Compile Include="Data\DataLoader.cs" />
+    <Compile Include="Data\DayOfWeekGui.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />
     <Compile Include="IconViewModel.cs" />
+    <Compile Include="Wpf\DelegateCommand.cs" />
+    <Compile Include="Wpf\TimespanConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

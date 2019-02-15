@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Factory
+namespace atroposTest.Factory
 {
 	[TestFixture]
 	public class DisposeGentlyTest

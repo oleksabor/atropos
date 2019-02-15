@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace atroposServerTest.Common
+namespace atroposTest.Common
 {
 	[TestFixture]
 	public class StringExtensionTest
@@ -54,7 +54,7 @@ namespace atroposServerTest.Common
 		[TestCase]
 		public void CheckWeekDayEmptyString()
 		{
-			Assert.Throws<ArgumentException>(() => StringExtension.IsWeekDay(null, 1));
+			Assert.IsFalse(StringExtension.IsWeekDay(null, 1));
 		}
 
 		[TestCase]

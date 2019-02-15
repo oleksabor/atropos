@@ -30,7 +30,14 @@ namespace Atropos.Server.Listener
 				if (mmDst.HasSetter)
 				{
 					object value = null;
-					var mmSrc = sourceAccessor[mmDst.Name];
+					MemberAccessor mmSrc = null;
+					try
+					{
+						mmSrc = sourceAccessor[mmDst.Name];
+					}
+					catch (ArgumentException)
+					{}
+
 					if (src != null && mmSrc != null && mmSrc.HasGetter)
 						try
 						{

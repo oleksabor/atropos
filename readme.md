@@ -14,7 +14,7 @@ Atropos is a tool that counts how many time person is logged on the computer. Se
 
 Please note that by defailt server logs *every* user time consumption even if it was not configured to be restricted with curfew.
 
-It was built using packages below
+It was built on .NETFramework,Version=v4.7.2 using packages below
 * LibLog to add logging framework abstraction
 * ling2db to store data in the Sqlite database
 * NLog to log data. However it can be changed to any of logging package that is supported by LibLog 
@@ -45,5 +45,7 @@ It is ready and will lock user screen each 30 seconds if user has exceeded allow
 This is small application that shows registred users that can be restricted with curfew. Read only.
 
 ![client window](doc/images/clientWindow.png)
+
+Curfew are editable (but there is no validation yet). Users list still is read-only. You have to login with each user to edit curfew.
  
 

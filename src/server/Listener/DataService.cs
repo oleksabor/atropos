@@ -66,5 +66,18 @@ namespace Atropos.Server.Listener
 		{
 			Db.Dispose();
 		}
+
+		public void SaveCurfew(Curfew[] values, string login)
+		{
+			var mapper = new Mapper<Curfew, Db.Curfew>();
+			var dbcurfews = mapper.Map(values);
+
+			using (var tr = Db.BeginTransaction())
+			{
+				Db.RemoveCurfews(login);
+				Db.AddCurfews(login, dbcurfews);
+				tr.Commit();
+			}
+		}
 	}
 }
