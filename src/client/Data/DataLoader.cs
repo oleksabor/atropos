@@ -82,7 +82,7 @@ namespace client.Data
 		public ICommand ReloadUsageLog { get; protected set; }
 		public void ReloadUsageLogMethod()
 		{
-			LoadCurfews();
+			LoadUsageLog();
 		}
 
 		private User _user;
