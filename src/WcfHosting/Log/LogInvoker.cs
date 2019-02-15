@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.Tools.WcfHosting.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -7,7 +8,7 @@ using System.ServiceModel.Dispatcher;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace com.Tools.WcfHosting.Logging
+namespace com.Tools.WcfHosting.Log
 {
 	/// <summary>
 	/// custom invoker that will log method calls and parameters
