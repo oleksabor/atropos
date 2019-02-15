@@ -60,7 +60,7 @@ namespace Atropos.Common.String
 		public static bool IsWeekDay(this string weekDayString, int day, ILog log = null)
 		{
 			if (weekDayString.IsEmpty())
-				throw new ArgumentException("no value", nameof(weekDayString));
+				return false;
 
 			var days = weekDayString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var d in days)

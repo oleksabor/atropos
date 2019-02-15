@@ -38,36 +38,4 @@ namespace client.Wpf.Data
 		public DayOfWeekGui Saturday { get { return this[DayOfWeek.Saturday]; } }
 		public DayOfWeekGui Sunday { get { return this[DayOfWeek.Sunday]; } }
 	}
-
-	public class DayOfWeekGui : PropertyChangedBase
-	{
-		private readonly Curfew dto;
-		private readonly DayOfWeek Day;
-
-		public DayOfWeekGui(DayOfWeek day, Curfew dto)
-		{
-			Day = day;
-			this.dto = dto;
-		}
-
-		bool Get(DayOfWeek day, Curfew dto)
-		{
-			return dto.WeekDay.IsWeekDay((int)day);
-		}
-
-		bool Set(DayOfWeek day, Curfew dto)
-		{
-			var iday = (int)day;
-			if (dto.WeekDay.IsWeekDay(iday))
-				return false;
-			dto.WeekDay += dto.WeekDay.Length > 0 ? $",{iday}" : iday.ToString();
-			return true;
-		}
-
-		public bool DaySet
-		{
-			get { return Get(Day, dto); }
-			set { if (Set(Day, dto)) base.RaisePropertyChanged(); }
-		}
-	}
 }

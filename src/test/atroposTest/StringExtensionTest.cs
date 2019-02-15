@@ -54,7 +54,7 @@ namespace atroposTest.Common
 		[TestCase]
 		public void CheckWeekDayEmptyString()
 		{
-			Assert.Throws<ArgumentException>(() => StringExtension.IsWeekDay(null, 1));
+			Assert.IsFalse(StringExtension.IsWeekDay(null, 1));
 		}
 
 		[TestCase]

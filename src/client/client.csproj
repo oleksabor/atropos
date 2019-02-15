@@ -70,6 +70,7 @@
     <Compile Include="Data\CurfewGui.cs" />
     <Compile Include="Data\DataItem.cs" />
     <Compile Include="Data\DataLoader.cs" />
+    <Compile Include="Data\DayOfWeekGui.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />
     <Compile Include="IconViewModel.cs" />
     <Page Include="MainWindow.xaml">
