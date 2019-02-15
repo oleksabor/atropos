@@ -2,6 +2,7 @@
 using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
+using Atropos.Server.Listener;
 using Atropos.Server.Worker;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,14 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker)
+		public DataServiceHost<DataService> Host { get; }
+
+		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost<DataService> host)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_accounter = accounter;
 			_stTool = stTool;
+			Host = host;
 			_tasks = new List<BackgroundTask>() { listener, accounter, locker };
 		}
 

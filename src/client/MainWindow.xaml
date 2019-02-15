@@ -1,0 +1,101 @@
+﻿<Window x:Class="client.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:client.Wpf"
+		
+        mc:Ignorable="d" Width="700" Height="537.153" Icon="Resources/scissors.ico" Title="atropos client"
+        >
+	<Grid >
+		<Grid.RowDefinitions>
+			<RowDefinition  Height="3*"/>
+			<RowDefinition Height="7*"/>
+		</Grid.RowDefinitions>
+		<Border Grid.Row="0">
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="users" Grid.Column="0"/>
+				<ListBox ItemsSource="{Binding Users.Value}" SelectedItem="{Binding SelectedUser}" Grid.Column="1">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<TextBox Margin="3" Text="{Binding Login}"/>
+								<TextBox Margin="3" Text="{Binding Name}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</Border>
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="6*"/>
+				<ColumnDefinition Width="4*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition  Height="Auto"/>
+				<RowDefinition  Height="*"/>
+			</Grid.RowDefinitions>
+			<TextBlock  Grid.Column="0" Grid.Row="0" Text="curfews"/>
+			<DataGrid ItemsSource="{Binding Curfews.Value}"  Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False">
+				<DataGrid.Columns>
+					<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<CheckBox IsChecked="{Binding Monday.DaySet}">Mo</CheckBox>
+									<CheckBox IsChecked="{Binding Tuesday.DaySet}">Tu</CheckBox>
+									<CheckBox IsChecked="{Binding Wednesday.DaySet}">We</CheckBox>
+									<CheckBox IsChecked="{Binding Thirsday.DaySet}">Th</CheckBox>
+									<CheckBox IsChecked="{Binding Friday.DaySet}">Fr</CheckBox>
+									<CheckBox IsChecked="{Binding Saturday.DaySet}" Foreground="Red">Sa</CheckBox>
+									<CheckBox IsChecked="{Binding Sunday.DaySet}" Foreground="Red">Su</CheckBox>
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Header="Time" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding Time}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<DataGridTemplateColumn Header="Break" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding Break}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+			<TextBlock  Grid.Column="1" Grid.Row="0" Text="usage log"/>
+			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+					<DataGrid.Columns>
+						<DataGridTemplateColumn Header="Date" Width="SizeToCells" IsReadOnly="True">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+								<DatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="Started" Width="SizeToCells" IsReadOnly="True">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+								<TextBox Text="{Binding Started}"/>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="Used" Width="SizeToCells" IsReadOnly="True">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBox Text="{Binding Used}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+		</Grid>
+	</Grid>
+</Window>

@@ -46,9 +46,10 @@ namespace Atropos.Server.Worker
 		/// <param name="day">The day to check.</param>
 		/// <param name="usage">The usage log.</param>
 		/// <returns>Usage result variable with Kind allowed to proceed or not</returns>
-		public UsageResult Check(IEnumerable<Curfew> curFews, int day, UsageLog usage)
+		public UsageResult Check(IEnumerable<Curfew> curFews, int day, IEnumerable<UsageLog> usages)
 		{
 			var curfew = curFews.OrderBy(_ => _.Time).FirstOrDefault(_ => _.WeekDay.IsWeekDay(day, Log));
+			var usage = usages.LastOrDefault();
 			if (curfew != null)
 			{
 				if (curfew.Time < usage.Used)

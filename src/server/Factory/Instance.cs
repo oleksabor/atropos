@@ -11,7 +11,7 @@ namespace Atropos.Server.Factory
 	/// IoC container wrapper. Can create child container <see cref="Child"/> and resolve instances <see cref="Create{T}"/>
 	/// </summary>
 	/// <seealso cref="System.IDisposable" />
-	public class Instance : IDisposable
+	public class Instance : IInstance
 	{
 		IContainer _container;
 
@@ -25,7 +25,7 @@ namespace Atropos.Server.Factory
 			return _container.GetInstance<T>();
 		}
 
-		public Instance Child()
+		public IInstance Child()
 		{
 			return new Instance(_container.CreateChildContainer());
 		}
@@ -39,5 +39,17 @@ namespace Atropos.Server.Factory
 				_container.Dispose();
 			}
 		}
+
+		public object Create(Type type)
+		{
+			return _container.GetInstance(type);
+		}
+	}
+
+	public interface IInstance : IDisposable
+	{
+		T Create<T>();
+		IInstance Child();
+		object Create(Type type);
 	}
 }
