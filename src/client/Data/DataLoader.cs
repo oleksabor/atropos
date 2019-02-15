@@ -1,8 +1,10 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Dto;
 using client.Wpf.Data;
+using com.Tools.WcfHosting;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,38 +13,31 @@ namespace client.Data
 {
 	public class DataLoader : PropertyChangedBase
 	{
-		public DataLoader(Func<IDataService> service, Action disconnect)
+		public DataLoader(RemoteAccess<IDataService> service)
 		{
-			Service = service;
-			Disconnect = disconnect;
 			Users = new DataItems<User>(LoadUsers);
-			UsageLog = new DataItems<UsageLog>(() => DoOrDisconnect(() => Service().GetUsageLog(SelectedUser?.Login, Date)));
+			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
 			Date = DateTime.Today;
+			Service = service;
 		}
 
-		T DoOrDisconnect<T>(Func<T> a)
+		ObservableCollection<UsageLog> LoadUsageLog()
 		{
-			try
-			{
-				return a();
-			}
-			catch (Exception)
-			{
-				Disconnect();
-				throw;
-			}
+			var usages = Service.Perform(_ => _.GetUsageLog(SelectedUser?.Login, Date));
+			return new ObservableCollection<UsageLog>(usages);
 		}
 
-		IEnumerable<User> LoadUsers()
+		ObservableCollection<User> LoadUsers()
 		{
-			return DoOrDisconnect(() => Service().GetUsers());
+			var users = Service.Perform(_ => _.GetUsers());
+			return new ObservableCollection<User>(users);
 		}
 
-		IEnumerable<CurfewGui> LoadCurfews()
+		ObservableCollection<CurfewGui> LoadCurfews()
 		{
-			var curfews = DoOrDisconnect(() => Service().GetCurfews(SelectedUser?.Login));
-			return curfews.Select(_ => new CurfewGui(_));
+			var curfews = Service.Perform(_ => _.GetCurfews(SelectedUser?.Login));
+			return new ObservableCollection<CurfewGui>(curfews.Select(_ => new CurfewGui(_)));
 		}
 
 		public DateTime Date { get; set; }
@@ -67,7 +62,6 @@ namespace client.Data
 			}
 		}
 
-		public Func<IDataService> Service { get; }
-		public Action Disconnect { get; }
+		public RemoteAccess<IDataService> Service { get; }
 	}
 }

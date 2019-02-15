@@ -1,6 +1,7 @@
 ﻿using Atropos.Common.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,9 +46,9 @@ namespace client.Data
 		}
 	}
 
-	public class DataItems<TItem> : DataItem<IEnumerable<TItem>>
+	public class DataItems<TItem> : DataItem<ObservableCollection<TItem>>
 	{
-		public DataItems(Func<IEnumerable<TItem>> loadData)
+		public DataItems(Func<ObservableCollection<TItem>> loadData)
 			: base(loadData)
 		{ }
 	}
