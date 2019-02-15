@@ -45,5 +45,7 @@ It is ready and will lock user screen each 30 seconds if user has exceeded allow
 This is small application that shows registred users that can be restricted with curfew. Read only.
 
 ![client window](doc/images/clientWindow.png)
+
+Curfew are editable (but there is no validation yet). Users list still is read-only. You have to login with each user to edit curfew.
  
 
