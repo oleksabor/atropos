@@ -14,7 +14,7 @@ Atropos is a tool that counts how many time person is logged on the computer. Se
 
 Please note that by defailt server logs *every* user time consumption even if it was not configured to be restricted with curfew.
 
-It was built using packages below
+It was built on .NETFramework,Version=v4.7.2 using packages below
 * LibLog to add logging framework abstraction
 * ling2db to store data in the Sqlite database
 * NLog to log data. However it can be changed to any of logging package that is supported by LibLog 
