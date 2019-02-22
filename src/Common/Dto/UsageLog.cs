@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace Atropos.Common.Dto
 {
-	[DataContract(Namespace = Ns)]
-	[XmlRoot(Namespace = Ns + "/usageLog")]
-	public class UsageLog : IdDto
+	public sealed partial class UsageLog
 	{
-		[DataMember(IsRequired = true)]
-		public int UserId { get; set; }
+		public TimeSpan Started
+		{
+			get { return TimeSpan.FromSeconds(StartedValue); }
+			set { StartedValue = (long)value.TotalSeconds; }
+		}
 
-		[DataMember(IsRequired = true)]
-		public TimeSpan Used { get; set; }
+		public TimeSpan Used
+		{
+			get { return TimeSpan.FromSeconds(UsedValue); }
+			set { UsedValue = (long)value.TotalSeconds; }
+		}
 
-		[DataMember(IsRequired = true)]
-		public TimeSpan Started { get; set; }
-
-		[DataMember(IsRequired = true)]
-		public DateTime Date { get; set; }
+		public DateTime Date
+		{
+			get { return DateTime.FromBinary(DateValue); }
+			set { DateValue = (long)value.ToBinary(); }
+		}
 	}
 }

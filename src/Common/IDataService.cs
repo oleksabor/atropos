@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Atropos.Common
 {
-	[ServiceContract(Namespace = IdDto.Ns)]
+	[ServiceContract(Namespace = "https://github.com/oleksabor/atropos")]
 	public interface IDataService
 	{
 		[OperationContract]
