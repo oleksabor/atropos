@@ -29,11 +29,11 @@ You can use GUI setup or install service and client manually
 
 ##### GUI setup
 
-Please download the latest setup package from Releases and run it. The serice will be installed and started automatically.
+Please download the latest setup package from [Releases](./releases) and run it. The serice will be installed and started automatically.
 
 ##### manual installation 
 
-Please download client and service binaries from Releases and extract archives to the local drive.
+Please download client and service binaries from [Releases](./releases) and extract archives to the local drive.
 
 You have to 
 * [install service](https://topshelf.readthedocs.io/en/latest/overview/commandline.html#topshelf-command-line-reference) by running `atropos.server install --localsystem` from command line using elevated command prompt (Run As Administrator). This will install service that is started using built-in LocalSystem Windows account.
