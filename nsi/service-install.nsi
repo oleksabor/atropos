@@ -5,6 +5,12 @@
 ; Version plug-in: http://nsis.sourceforge.net/Version_plug-in
 ; XtInfoPlugin plug-in: http://nsis.sourceforge.net/XtInfoPlugin_plug-in
 ; Simple Service plug-in: http://nsis.sourceforge.net/NSIS_Simple_Service_Plugin
+; nsArray plugin https://nsis.sourceforge.io/Arrays_in_NSIS
+; https://nsis.sourceforge.io/LogicLib
+
+!include "MUI.nsh"
+!include 'LogicLib.nsh'
+!include nsArray.nsh
 
 !define registryKeyName "atropos"
 !define regKeyStr "Software\${registryKeyName}"
@@ -27,23 +33,6 @@ RequestExecutionLevel admin
 
 
 var TempResult
-
-Function .onInit
-
-	# detect Windows XP
-	Version::IsWindowsXP
-	# get result
-	Pop $TempResult
-	# check result
-	StrCmp $TempResult "1" IsUserAdmin NotWindowsXP
-
-	NotWindowsXP:
-	MessageBox MB_OK "This program requires Windows XP."
-	Abort
-
-FunctionEnd
-
-
 ;--------------------------------
 var conpath
 ;write file and concatenate its name 
@@ -68,6 +57,9 @@ StrCpy $conpath "${fn}|$conpath"
 ;--------------------------------
 ShowInstDetails show
 
+!define serverBin "..\src\server\bin\Release\"
+!define clientBin "..\src\client\bin\Release\"
+
 Section "Main"
 
 	WriteRegStr HKLM ${regKeyStr} "Install_Dir" "$INSTDIR"
@@ -79,12 +71,8 @@ Section "Main"
 	WriteRegDWORD HKLM "${msUninstallKey}\${registryKeyName}" "NoModify" 1
 	WriteRegDWORD HKLM "${msUninstallKey}\${registryKeyName}" "NoRepair" 1
 	
-	;D:\work\atropos\src\server\bin\Release\
-	!define serverBin "..\src\server\bin\Release\"
-	!define clientBin "..\src\client\bin\Release\"
-	
-	SetOutPath "$INSTDIR\server"
-	!insertmacro FileReg ${serverBin} "atroposServer.exe"
+	SetOutPath "$INSTDIR\server\"
+	!insertmacro FileReg "${serverBin}" "atroposServer.exe"
 	!insertmacro FileReg ${serverBin} "atroposServer.pdb"
 	!insertmacro FileReg ${serverBin} "atroposServer.exe.config"
 	!insertmacro FileReg ${serverBin} "Common.dll"
@@ -102,12 +90,11 @@ Section "Main"
 	!insertmacro FileReg ${serverBin} "WcfHosting.dll"
 	!insertmacro FileReg ${serverBin} "WcfHosting.pdb"
 	SetOutPath "$INSTDIR\server\x86"
-	!insertmacro FileReg "${serverBin}\x86" "SQLite.Interop.dll"
+	!insertmacro FileReg "${serverBin}\x86\" "SQLite.Interop.dll"
 	SetOutPath "$INSTDIR\server\x64"
-	!insertmacro FileReg "${serverBin}\x64" "SQLite.Interop.dll"
+	!insertmacro FileReg "${serverBin}\x64\" "SQLite.Interop.dll"
 
-	SetOutPath "$INSTDIR\client"
-	!insertmacro FileReg ${clientBin} "atroposServer.exe"
+	SetOutPath "$INSTDIR\client\"
 	!insertmacro FileReg ${clientBin} "client.exe"
 	!insertmacro FileReg ${clientBin} "client.pdb"
 	!insertmacro FileReg ${clientBin} "client.exe.config"
@@ -150,7 +137,9 @@ Section "Uninstall"
 	
 	; Remove files and uninstaller
 	Delete "$INSTDIR\uninstall.exe"
+	
 	${ForEachIn} fileList $R0 $R1
+	;${ForEach} $v fileList
 		IfFileExists "$INSTDIR\$R1" 0 +2
 			Delete "$INSTDIR\$R1"
 		IfFileExists "$R1" 0
