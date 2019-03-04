@@ -1,6 +1,3 @@
-; SilentInstall silent
-; Icon "ddmitov.ico"
-
 ; DEPENDENCIES:
 ; Version plug-in: http://nsis.sourceforge.net/Version_plug-in
 ; XtInfoPlugin plug-in: http://nsis.sourceforge.net/XtInfoPlugin_plug-in
@@ -11,38 +8,65 @@
 !include "MUI.nsh"
 !include 'LogicLib.nsh'
 !include nsArray.nsh
+!include "FileFunc.nsh"
+
 
 !define registryKeyName "atropos"
 !define regKeyStr "Software\${registryKeyName}"
 !define msUninstallKey "Software\Microsoft\Windows\CurrentVersion\Uninstall\" 
 !define /file Version "..\src\versionFile"
 
+
+!define programsMenu "$SMPROGRAMS\Atropos"
 ; The file to write
 OutFile "..\bin\atropos.${Version}.exe"
-
 ;--------------------------------
 ; The default installation directory
 InstallDir $PROGRAMFILES\atropos 
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM $regKeyStr "Install_Dir"
+InstallDirRegKey HKLM "Software\atropos" "Install_Dir"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
+Name "Atropos"
+Icon "..\src\client\Resources\scissors.ico"
 
-var TempResult
 ;--------------------------------
-var conpath
+var conpath ; used to store installed file names
 ;write file and concatenate its name 
 ; file name must contain path part if it is placed to the $OUTDIR sub directory
-!macro FileReg path fn
-File "${path}${fn}"
+!macro FileReg path fileName installPath
+File "${path}${fileName}"
 
-StrCpy $conpath "${fn}|$conpath"
+StrCpy $conpath "${installPath}\${fileName}|$conpath"
+!macroend
+!macro FileRegS path fileName 
+!insertmacro FileReg ${path} ${filename} "server"
+!macroend
+!macro FileRegC path fileName 
+!insertmacro FileReg ${path} ${filename} "client"
 !macroend
 
+var dateTime 
+
+!macro FileLog line
+
+  !insertmacro GetTime
+  ${GetTime} "" "L" $0 $1 $2 $3 $4 $5 $6
+  StrCpy $dateTime "$2$1$0-$4$5$6"
+
+FileOpen $4 "$INSTDIR\setup.log" a
+FileSeek $4 0 END
+FileWrite $4 "$dateTime ${line}"
+FileWrite $4 "$\r$\n" ; we write an extra line
+FileClose $4 ; and close the file
+
+DetailPrint "${line}"
+
+!macroend
 
 ;--------------------------------
 ; Pages
@@ -59,66 +83,129 @@ ShowInstDetails show
 
 !define serverBin "..\src\server\bin\Release\"
 !define clientBin "..\src\client\bin\Release\"
+!define serviceName "atropos.server"
+var uninstRK
+var serviceSet
 
+Function .onInit
+
+FunctionEnd
+
+!macro ServiceExists name
+StrCpy $R0 '"$SYSDIR\sc.exe" query ${name}'
+nsExec::ExecToStack '$R0'
+;Pop $R1  # contains return code
+;Pop $R2  # contains output
+!macroend
+!macro ServiceStop name
+StrCpy $R0 '"$SYSDIR\sc.exe" stop ${name}'
+nsExec::ExecToStack '$R0'
+;Pop $R1  # contains return code
+;Pop $R2  # contains output
+!macroend
+!macro ServiceStart name
+StrCpy $R0 '"$SYSDIR\sc.exe" start ${name}'
+nsExec::ExecToStack '$R0'
+;Pop $R1  # contains return code
+;Pop $R2  # contains output
+!macroend
+!macro ServiceDelete name
+StrCpy $R0 '"$SYSDIR\sc.exe" delete ${name}'
+nsExec::ExecToStack '$R0'
+;Pop $R1  # contains return code
+;Pop $R2  # contains output
+!macroend
 Section "Main"
 
 	WriteRegStr HKLM ${regKeyStr} "Install_Dir" "$INSTDIR"
-	
+	!insertmacro FileLog "instaling to the $INSTDIR (saved to the ${regKeyStr})"
 
-	; Write the uninstall keys for Windows
-	WriteRegStr HKLM "${msUninstallKey}${registryKeyName}" "DisplayName" "Atropos (uninstall)"
-	WriteRegStr HKLM "${msUninstallKey}\${registryKeyName}" "UninstallString" '"$INSTDIR\uninstall.exe"'
-	WriteRegDWORD HKLM "${msUninstallKey}\${registryKeyName}" "NoModify" 1
-	WriteRegDWORD HKLM "${msUninstallKey}\${registryKeyName}" "NoRepair" 1
+	StrCpy $uninstRK "${msUninstallKey}${registryKeyName}"
 	
+	; Write the uninstall keys for Windows
+	WriteRegStr HKLM $uninstRK "DisplayName" "Atropos (uninstall)"
+	WriteRegStr HKLM $uninstRK "UninstallString" '"$INSTDIR\uninstall.exe"'
+	WriteRegDWORD HKLM $uninstRK "NoModify" 1
+	WriteRegDWORD HKLM $uninstRK "NoRepair" 1
+	
+	!insertmacro FileLog "uninstall info was saved to the $uninstRK"
+	
+	!insertmacro ServiceExists ${serviceName}
+	Pop $R1 ; returns an errorcode if the service doesn´t exists (<>0)/service exists (0)
+	StrCpy $serviceSet $R1
+	
+	!insertmacro FileLog "service was found $serviceSet $R1"	
+	
+	${If} $serviceSet = 0
+		!insertmacro FileLog "service is stopping ${serviceName}"
+		SimpleSC::StopService ${serviceName} 1 30
+		Pop $0
+		!insertmacro FileLog "${serviceName} service stop result $0"
+		
+		SimpleSC::RemoveService ${serviceName}
+		Pop $0
+		!insertmacro FileLog "${serviceName} service uninstall result $0"
+	${Endif}
+  
 	SetOutPath "$INSTDIR\server\"
-	!insertmacro FileReg "${serverBin}" "atroposServer.exe"
-	!insertmacro FileReg ${serverBin} "atroposServer.pdb"
-	!insertmacro FileReg ${serverBin} "atroposServer.exe.config"
-	!insertmacro FileReg ${serverBin} "Common.dll"
-	!insertmacro FileReg ${serverBin} "Common.pdb"
-	!insertmacro FileReg ${serverBin} "linq2db.dll"
-	!insertmacro FileReg ${serverBin} "linq2db.pdb"
-	!insertmacro FileReg ${serverBin} "linq2db.xml"
-	!insertmacro FileReg ${serverBin} "NLog.config"
-	!insertmacro FileReg ${serverBin} "NLog.dll"
-	!insertmacro FileReg ${serverBin} "StructureMap.dll"
-	!insertmacro FileReg ${serverBin} "System.Data.SQLite.dll"
-	!insertmacro FileReg ${serverBin} "System.Data.SQLite.dll.config"
-	!insertmacro FileReg ${serverBin} "Topshelf.dll"
-	!insertmacro FileReg ${serverBin} "Topshelf.LibLog.dll"
-	!insertmacro FileReg ${serverBin} "WcfHosting.dll"
-	!insertmacro FileReg ${serverBin} "WcfHosting.pdb"
+	!insertmacro FileRegS "${serverBin}" "atroposServer.exe" 
+	!insertmacro FileRegS ${serverBin} "atroposServer.pdb"
+	!insertmacro FileRegS ${serverBin} "atroposServer.exe.config"
+	!insertmacro FileRegS ${serverBin} "Common.dll"
+	!insertmacro FileRegS ${serverBin} "Common.pdb"
+	!insertmacro FileRegS ${serverBin} "linq2db.dll"
+	!insertmacro FileRegS ${serverBin} "linq2db.pdb"
+	!insertmacro FileRegS ${serverBin} "linq2db.xml"
+	!insertmacro FileRegS ${serverBin} "NLog.config"
+	!insertmacro FileRegS ${serverBin} "NLog.dll"
+	!insertmacro FileRegS ${serverBin} "StructureMap.dll"
+	!insertmacro FileRegS ${serverBin} "System.Data.SQLite.dll"
+	!insertmacro FileRegS ${serverBin} "System.Data.SQLite.dll.config"
+	!insertmacro FileRegS ${serverBin} "Topshelf.dll"
+	!insertmacro FileRegS ${serverBin} "Topshelf.LibLog.dll"
+	!insertmacro FileRegS ${serverBin} "WcfHosting.dll"
+	!insertmacro FileRegS ${serverBin} "WcfHosting.pdb"
 	SetOutPath "$INSTDIR\server\x86"
-	!insertmacro FileReg "${serverBin}\x86\" "SQLite.Interop.dll"
+	!insertmacro FileRegS "${serverBin}" "x86\SQLite.Interop.dll"
 	SetOutPath "$INSTDIR\server\x64"
-	!insertmacro FileReg "${serverBin}\x64\" "SQLite.Interop.dll"
+	!insertmacro FileRegS "${serverBin}" "x64\SQLite.Interop.dll"
 
 	SetOutPath "$INSTDIR\client\"
-	!insertmacro FileReg ${clientBin} "client.exe"
-	!insertmacro FileReg ${clientBin} "client.pdb"
-	!insertmacro FileReg ${clientBin} "client.exe.config"
-	!insertmacro FileReg ${clientBin} "Common.dll"
-	!insertmacro FileReg ${clientBin} "Common.pdb"
-	!insertmacro FileReg ${clientBin} "Hardcodet.Wpf.TaskbarNotification.dll"
-	!insertmacro FileReg ${clientBin} "Hardcodet.Wpf.TaskbarNotification.pdb"
-	!insertmacro FileReg ${clientBin} "Hardcodet.Wpf.TaskbarNotification.xml"
-	!insertmacro FileReg ${clientBin} "NLog.config"
-	!insertmacro FileReg ${clientBin} "NLog.dll"
-	!insertmacro FileReg ${clientBin} "WcfHosting.dll"
-	!insertmacro FileReg ${clientBin} "WcfHosting.pdb"	
-	
+	!insertmacro FileRegC ${clientBin} "client.exe"
+	!insertmacro FileRegC ${clientBin} "client.pdb"
+	!insertmacro FileRegC ${clientBin} "client.exe.config"
+	!insertmacro FileRegC ${clientBin} "Common.dll"
+	!insertmacro FileRegC ${clientBin} "Common.pdb"
+	!insertmacro FileRegC ${clientBin} "Hardcodet.Wpf.TaskbarNotification.dll"
+	!insertmacro FileRegC ${clientBin} "Hardcodet.Wpf.TaskbarNotification.pdb"
+	!insertmacro FileRegC ${clientBin} "Hardcodet.Wpf.TaskbarNotification.xml"
+	!insertmacro FileRegC ${clientBin} "NLog.config"
+	!insertmacro FileRegC ${clientBin} "NLog.dll"
+	!insertmacro FileRegC ${clientBin} "WcfHosting.dll"
+	!insertmacro FileRegC ${clientBin} "WcfHosting.pdb"	
+
 	WriteRegStr HKLM ${regKeyStr} "installed_files" $conpath
+	
+	!insertmacro FileLog "files were written to the ${regKeyStr}"
+	!insertmacro FileLog $conpath
 
 	WriteUninstaller "uninstall.exe"
 
 	;shortcuts
 	CreateDirectory "${programsMenu}"
 	CreateShortCut "${programsMenu}\Uninstall.lnk" $INSTDIR\uninstall.exe
+	CreateShortCut "${programsMenu}\client.lnk" $INSTDIR\client\client.exe 
 	
-	Exec '"$INSTDIR\server\atroposServer.exe install --localsystem'
-	Exec 'net start atropos.server'
+	DetailPrint "installing ${serviceName}"
+	nsExec::ExecToStack '"$INSTDIR\server\atroposServer.exe" install --localsystem'
+	Pop $0
+	Pop $1
+	!insertmacro FileLog "service was installed, $0 $1"
 
+	!insertmacro ServiceStart ${serviceName}
+	Pop $0
+	Pop $1
+	!insertmacro FileLog "service start result ${serviceName} $0 $1"
 
 SectionEnd
 
@@ -126,26 +213,38 @@ SectionEnd
 ; Uninstaller
 Section "Uninstall"
 ; read installed files and delete them  
+
+	!insertmacro ServiceExists ${serviceName}
+	Pop $R1 ; returns an errorcode if the service doesn´t exists (<>0)/service exists (0)
+	StrCpy $serviceSet $R1
+	
+	!insertmacro FileLog "service was found $serviceSet $R1"	
+	
+	${If} $serviceSet = 0
+		!insertmacro FileLog "${serviceName} service was installed, stopping"
+		SimpleSC::StopService "${serviceName}" 1 30
+		
+		SimpleSC::RemoveService "${serviceName}"
+		Pop $0
+		!insertmacro FileLog "${serviceName} service uninstall result $0"
+	${Endif}
+
 	ReadRegStr $0 HKLM ${regKeyStr} "installed_files"
 	nsArray::Split fileList "$0" "|" /noempty
-	
-	; Remove registry keys
-	DeleteRegKey HKLM "${msUninstallKey}${registryKeyName}"
-	DeleteRegKey HKLM ${regKeyStr}
-;	Call "un.GetMyDocs"
-;	StrCpy $myDocs $0
-	
-	; Remove files and uninstaller
-	Delete "$INSTDIR\uninstall.exe"
-	
 	${ForEachIn} fileList $R0 $R1
-	;${ForEach} $v fileList
 		IfFileExists "$INSTDIR\$R1" 0 +2
 			Delete "$INSTDIR\$R1"
 		IfFileExists "$R1" 0
 			Delete "$R1"
 	${Next}
 
+	; Remove registry keys
+	DeleteRegKey HKLM "${msUninstallKey}${registryKeyName}"
+	DeleteRegKey HKLM ${regKeyStr}
+
+	; Remove files and uninstaller
+	Delete "$INSTDIR\uninstall.exe"
+	
 	RMDir "$INSTDIR\server\x86"
 	RMDir "$INSTDIR\server\x64"
 	RMDir "$INSTDIR\server"
