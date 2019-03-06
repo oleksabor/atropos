@@ -19,10 +19,14 @@ namespace client
 		private readonly DataServiceClient client;
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataServiceRemote(DataServiceClient client)
+		public DataServiceRemote(Connection config)
 		{
-			this.client = client;
+			channel = new Channel("localhost", config.Port, ChannelCredentials.Insecure);
+			Log.Debug($"configured with remote {channel.Target}");
+			this.client = new DataServiceClient(channel);
 		}
+
+		Channel channel;
 
 		public User[] GetUsers()
 		{
@@ -86,6 +90,25 @@ namespace client
 			req.Values.AddRange(values);
 
 			client.SaveCurfew(req);
+		}
+
+		bool disposed;
+
+		public void Dispose()
+		{
+			if (!disposed)
+			{
+				disposed = true;
+				if (channel != null)
+					try
+					{
+						channel.ShutdownAsync().Wait();
+					}
+					catch (Exception e)
+					{
+						Log.ErrorException("failed to shutdown gRPC client", e);
+					}
+			}
 		}
 	}
 }

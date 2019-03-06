@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace client.Data
 {
-	public class DataLoader : PropertyChangedBase
+	public class DataLoader : PropertyChangedBase, IDisposable
 	{
 		public DataLoader(IDataService service)
 		{
@@ -83,6 +83,12 @@ namespace client.Data
 			UsageLog.Value = LoadUsageLog();
 		}
 
+		public void Dispose()
+		{
+			if (Service != null)
+				Service.Dispose();
+		}
+
 		private User _user;
 		private readonly IDataService Service;
 
@@ -98,7 +104,5 @@ namespace client.Data
 				}
 			}
 		}
-
-		//public RemoteAccess<IDataService> Service { get; }
 	}
 }

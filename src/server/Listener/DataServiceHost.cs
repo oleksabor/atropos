@@ -1,5 +1,6 @@
 ﻿using Atropos.Common;
 using Atropos.Common.Dto;
+using Atropos.Common.Logging;
 using Atropos.Server.Factory;
 using Grpc.Core;
 using System;
@@ -13,14 +14,16 @@ namespace Atropos.Server.Listener
 	public class DataServiceHost : DisposeGently
 	{
 		protected readonly Grpc.Core.Server server;
+		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataServiceHost(DataServiceImpl service) 
+		public DataServiceHost(DataServiceImpl service, Connection config) 
 		{
 			server = new Grpc.Core.Server
 			{
 				Services = { DataService.BindService(service) },
-				Ports = { new ServerPort("localhost", 12345, ServerCredentials.Insecure) }
+				Ports = { new ServerPort("localhost", config.Port, ServerCredentials.Insecure) }
 			};
+			Log.Info($"configured to listen on {config.Port}");
 		}
 		protected object startingLock = new object();
 		protected bool started;
@@ -31,6 +34,7 @@ namespace Atropos.Server.Listener
 			{
 				server.Start();
 				started = true;
+				Log.Info($"gRPC server was started");
 			});
 		}
 
@@ -39,6 +43,7 @@ namespace Atropos.Server.Listener
 			Do(() => started, () => 
 			{
 				server.ShutdownAsync().Wait();
+				Log.Info($"gRPC server was stopped");
 				started = false;
 			});
 		}

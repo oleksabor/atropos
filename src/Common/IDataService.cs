@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Atropos.Common
 {
 	[ServiceContract(Namespace = "https://github.com/oleksabor/atropos")]
-	public interface IDataService
+	public interface IDataService : IDisposable
 	{
 		[OperationContract]
 		User[] GetUsers();
