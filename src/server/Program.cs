@@ -2,7 +2,6 @@
 using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
-using com.Tools.WcfHosting;
 using Grpc.Core;
 using StructureMap;
 using System;

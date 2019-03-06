@@ -1,8 +1,5 @@
-﻿using Atropos.Common;
-using Atropos.Common.Logging;
+﻿using Atropos.Common.Logging;
 using client.Data;
-using client.Wpf;
-using com.Tools.WcfHosting;
 using Grpc.Core;
 using Hardcodet.Wpf.TaskbarNotification;
 using System;

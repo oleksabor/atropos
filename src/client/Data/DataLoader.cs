@@ -2,7 +2,6 @@
 using Atropos.Common.Dto;
 using client.Wpf;
 using client.Wpf.Data;
-using com.Tools.WcfHosting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

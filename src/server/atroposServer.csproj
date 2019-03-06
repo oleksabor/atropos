@@ -157,10 +157,6 @@
       <Project>{01e61dbd-3943-490d-bdfe-abef4944ce04}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WcfHosting\WcfHosting.csproj">
-      <Project>{fd6664c9-bef2-4760-8b35-16a85b49d218}</Project>
-      <Name>WcfHosting</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
