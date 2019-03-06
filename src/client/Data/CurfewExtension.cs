@@ -12,12 +12,12 @@ namespace client.Data
 	{
 		public static Curfew ToDto(this CurfewGui value)
 		{
-			return new Curfew { Id = value.Id, Break = value.Break, Time = value.Time, UserId = value.UserId, WeekDay = value.WeekDay };
+			return value.Value;
 		}
 
 		public static CurfewGui ToGui(this Curfew value)
 		{
-			return new CurfewGui { Id = value.Id, Break = value.Break, Time = value.Time, UserId = value.UserId, WeekDay = value.WeekDay };
+			return new CurfewGui(value);
 		}
 	}
 }

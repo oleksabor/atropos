@@ -1,8 +1,10 @@
-﻿using Atropos.Common.Logging;
+﻿using Atropos.Common;
+using Atropos.Common.Logging;
 using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
-using com.Tools.WcfHosting;
+using Grpc.Core;
+using Nerdle.AutoConfig;
 using StructureMap;
 using System;
 using System.Collections.Generic;
@@ -66,10 +68,22 @@ namespace Atropos.Server
 				});
 
 				_.For<IData>().Use(() => new Data("Db")).AlwaysUnique();
-				_.For<IWcfHost>().Use<WcfHosting>();
-				_.For<CommunicationSettings>().Use(context => new CommunicationSettings { Host = new EndpointSettings { Uri = "net.pipe://localhost/atropos", Binding = "atropos_binding" } });
 				_.For<Instance>().Singleton();
+				_.For<Connection>().Use(ctx => GetConnection());
 				});
+		}
+
+		static Connection GetConnection()
+		{
+			try
+			{
+				return AutoConfig.Map<Common.Settings>().Connection;
+			}
+			catch (Exception e)
+			{
+				Log.ErrorException("failed to read configuration", e);
+				throw new ApplicationException("can't read configuration", e);
+			}
 		}
 	}
 

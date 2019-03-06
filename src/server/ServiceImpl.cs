@@ -1,4 +1,5 @@
-﻿using Atropos.Common.Logging;
+﻿using Atropos.Common.Dto;
+using Atropos.Common.Logging;
 using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
@@ -27,9 +28,9 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataServiceHost<DataService> Host { get; }
+		public DataServiceHost Host { get; }
 
-		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost<DataService> host)
+		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost host)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_accounter = accounter;
@@ -46,6 +47,8 @@ namespace Atropos.Server
 				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
 
 				DoAllTasks(_tasks, t =>	t.Start());
+
+				Host.Start();
 			}
 			catch (Exception e)
 			{
@@ -72,6 +75,8 @@ namespace Atropos.Server
 		public bool Stop(HostControl hostControl)
 		{
 			Log.Debug("stopping");
+
+			Host.Stop();
 
 			DoAllTasks(_tasks, t => t.Stop());
 

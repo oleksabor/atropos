@@ -9,16 +9,28 @@ using System.Threading.Tasks;
 
 namespace client.Wpf.Data
 {
-	public class CurfewGui : Curfew
+	public class CurfewGui : PropertyChangedBase
 	{
+		Curfew curfew;
+		public Curfew Value { get { return curfew; } protected set { Set(ref curfew, value); } }
+
 		IDictionary<DayOfWeek, DayOfWeekGui> _items = new Dictionary<DayOfWeek, DayOfWeekGui>();
+
+		public CurfewGui()
+			: this(new Curfew())
+		{ }
+
+		public CurfewGui(Curfew value)
+		{
+			this.Value = value;
+		}
 
 		public DayOfWeekGui this[DayOfWeek index]
 		{
 			get
 			{
 				if (!_items.ContainsKey(index))
-					_items.Add(index, new DayOfWeekGui(index, this));
+					_items.Add(index, new DayOfWeekGui(index, Value));
 				return _items[index];
 			}
 		}

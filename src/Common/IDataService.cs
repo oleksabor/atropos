@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Atropos.Common
 {
-	[ServiceContract(Namespace = IdDto.Ns)]
-	public interface IDataService
+	[ServiceContract(Namespace = "https://github.com/oleksabor/atropos")]
+	public interface IDataService : IDisposable
 	{
 		[OperationContract]
 		User[] GetUsers();

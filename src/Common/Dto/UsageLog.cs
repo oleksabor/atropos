@@ -1,27 +1,30 @@
-﻿using System;
+﻿using Atropos.Common.DateTimeConv;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace Atropos.Common.Dto
 {
-	[DataContract(Namespace = Ns)]
-	[XmlRoot(Namespace = Ns + "/usageLog")]
-	public class UsageLog : IdDto
+	public sealed partial class UsageLog
 	{
-		[DataMember(IsRequired = true)]
-		public int UserId { get; set; }
+		public TimeSpan Started
+		{
+			get { return StartedValue.ToTime(); }
+			set { StartedValue = value.ToDto(); }
+		}
 
-		[DataMember(IsRequired = true)]
-		public TimeSpan Used { get; set; }
+		public TimeSpan Used
+		{
+			get { return UsedValue.ToTime(); }
+			set { UsedValue = value.ToDto(); }
+		}
 
-		[DataMember(IsRequired = true)]
-		public TimeSpan Started { get; set; }
-
-		[DataMember(IsRequired = true)]
-		public DateTime Date { get; set; }
+		public DateTime Date
+		{
+			get { return DateValue.ToDate(); }
+			set { DateValue = value.ToDto(); }
+		}
 	}
 }

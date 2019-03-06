@@ -1,6 +1,8 @@
 ﻿using Atropos.Common;
+using Atropos.Common.Dto;
+using Atropos.Common.Logging;
 using Atropos.Server.Factory;
-using com.Tools.WcfHosting;
+using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +11,54 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Listener
 {
-	public class DataServiceHost<T> : DisposeGently
+	public class DataServiceHost : DisposeGently
 	{
-		public DataServiceHost(IWcfHost host, CommunicationSettings config, StructureMapServiceBehavior smap) 
+		protected readonly Grpc.Core.Server server;
+		static ILog Log = LogProvider.GetCurrentClassLogger();
+
+		public DataServiceHost(DataServiceImpl service, Connection config) 
 		{
-			Host = host;
-			Config = config;
-			Host.AddHostType<T>(Config, new[] { smap });
+			server = new Grpc.Core.Server
+			{
+				Services = { DataService.BindService(service) },
+				Ports = { new ServerPort("localhost", config.Port, ServerCredentials.Insecure) }
+			};
+			Log.Info($"configured to listen on {config.Port}");
+		}
+		protected object startingLock = new object();
+		protected bool started;
+
+		public void Start()
+		{
+			Do(() => !started, () =>
+			{
+				server.Start();
+				started = true;
+				Log.Info($"gRPC server was started");
+			});
 		}
 
-		public IWcfHost Host { get; }
-		public CommunicationSettings Config { get; }
+		public void Stop()
+		{
+			Do(() => started, () => 
+			{
+				server.ShutdownAsync().Wait();
+				Log.Info($"gRPC server was stopped");
+				started = false;
+			});
+		}
+
+		void Do(Func<bool> canProceed, Action action)
+		{
+			if (canProceed())
+				lock (startingLock)
+					if (canProceed())
+						action();
+		}
 
 		public override void DisposeIt()
 		{
-			Host.CloseHost();
+			Stop();
 		}
 	}
 }
