@@ -1,6 +1,8 @@
 ﻿using Atropos.Common;
+using Atropos.Common.Dto;
 using Atropos.Server.Factory;
 using com.Tools.WcfHosting;
+using Grpc.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +11,50 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Listener
 {
-	public class DataServiceHost<T> : DisposeGently
+	public class DataServiceHost : DisposeGently
 	{
-		public DataServiceHost(IWcfHost host, CommunicationSettings config, StructureMapServiceBehavior smap) 
+		protected readonly Grpc.Core.Server server;
+
+		public DataServiceHost(DataServiceImpl service) 
 		{
-			Host = host;
-			Config = config;
-			Host.AddHostType<T>(Config, new[] { smap });
+			server = new Grpc.Core.Server
+			{
+				Services = { DataService.BindService(service) },
+				Ports = { new ServerPort("localhost", 12345, ServerCredentials.Insecure) }
+			};
+		}
+		protected object startingLock = new object();
+		protected bool started;
+
+		public void Start()
+		{
+			Do(() => !started, () =>
+			{
+				server.Start();
+				started = true;
+			});
 		}
 
-		public IWcfHost Host { get; }
-		public CommunicationSettings Config { get; }
+		public void Stop()
+		{
+			Do(() => started, () => 
+			{
+				server.ShutdownAsync().Wait();
+				started = false;
+			});
+		}
+
+		void Do(Func<bool> canProceed, Action action)
+		{
+			if (canProceed())
+				lock (startingLock)
+					if (canProceed())
+						action();
+		}
 
 		public override void DisposeIt()
 		{
-			Host.CloseHost();
+			Stop();
 		}
 	}
 }

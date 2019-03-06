@@ -19,10 +19,10 @@ namespace atroposTest.Client.Gui
 			var source = new Curfew { Break = TimeSpan.FromMinutes(20), Time = TimeSpan.FromHours(2), WeekDay = "1,2,6,0", Id = 123, };
 			var cg = source.ToGui();
 
-			Assert.AreEqual(source.Time, cg.Time);
-			Assert.AreEqual(source.Break, cg.Break);
-			Assert.AreEqual(source.WeekDay, cg.WeekDay);
-			Assert.AreEqual(source.Id, cg.Id);
+			Assert.AreEqual(source.Time, cg.Value.Time);
+			Assert.AreEqual(source.Break, cg.Value.Break);
+			Assert.AreEqual(source.WeekDay, cg.Value.WeekDay);
+			Assert.AreEqual(source.Id, cg.Value.Id);
 		}
 
 		[TestCase]

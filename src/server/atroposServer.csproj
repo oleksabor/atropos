@@ -39,6 +39,15 @@
     <LangVersion>default</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.6.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.6.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Core.1.19.0\lib\net45\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Grpc.Core.Api, Version=0.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grpc.Core.Api.1.19.0\lib\net45\Grpc.Core.Api.dll</HintPath>
+    </Reference>
     <Reference Include="linq2db, Version=2.6.4.0, Culture=neutral, PublicKeyToken=e41013125f9e410a, processorArchitecture=MSIL">
       <HintPath>..\packages\linq2db.2.6.4\lib\net46\linq2db.dll</HintPath>
     </Reference>
@@ -56,6 +65,9 @@
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.109.2\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -78,7 +90,7 @@
   <ItemGroup>
     <Compile Include="Event\ScreenBlock.cs" />
     <Compile Include="Listener\Mapper.cs" />
-    <Compile Include="Listener\DataService.cs" />
+    <Compile Include="Listener\DataServiceImpl.cs" />
     <Compile Include="Listener\DataServiceHost.cs" />
     <Compile Include="Listener\StructureMapInstanceProvider.cs" />
     <Compile Include="Listener\StructureMapServiceBehavior.cs" />
@@ -157,6 +169,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets'))" />
     <Error Condition="!Exists('..\packages\linq2db.SQLite.2.6.4\build\linq2db.SQLite.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\linq2db.SQLite.2.6.4\build\linq2db.SQLite.props'))" />
+    <Error Condition="!Exists('..\packages\Grpc.Core.1.19.0\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grpc.Core.1.19.0\build\net45\Grpc.Core.targets'))" />
   </Target>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
+  <Import Project="..\packages\Grpc.Core.1.19.0\build\net45\Grpc.Core.targets" Condition="Exists('..\packages\Grpc.Core.1.19.0\build\net45\Grpc.Core.targets')" />
 </Project>
