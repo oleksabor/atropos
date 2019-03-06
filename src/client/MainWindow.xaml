@@ -68,14 +68,14 @@
 					<DataGridTemplateColumn Header="Time" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox Text="{Binding Time, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
+								<TextBox Text="{Binding Value.Time, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 					<DataGridTemplateColumn Header="Break" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<TextBox Text="{Binding Break, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
+								<TextBox Text="{Binding Value.Break, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ts2str}}" />
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
