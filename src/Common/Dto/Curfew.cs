@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atropos.Common.DateTimeConv;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,14 @@ namespace Atropos.Common.Dto
 	{
 		public TimeSpan Break
 		{
-			get { return TimeSpan.FromSeconds(BreakValue); }
-			set { BreakValue = (long)value.TotalSeconds; }
+			get { return BreakValue.ToTime(); }
+			set { BreakValue = value.ToDto(); }
 		}
 
 		public TimeSpan Time
 		{
-			get { return TimeSpan.FromSeconds(TimeValue); }
-			set { TimeValue = (long)value.TotalSeconds; }
+			get { return TimeValue.ToTime(); }
+			set { TimeValue = value.ToDto(); }
 		}
 	}
 }

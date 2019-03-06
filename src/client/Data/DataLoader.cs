@@ -14,39 +14,38 @@ namespace client.Data
 {
 	public class DataLoader : PropertyChangedBase
 	{
-		public DataLoader(RemoteAccess<IDataService> service)
+		public DataLoader(IDataService service)
 		{
 			Users = new DataItems<User>(LoadUsers);
 			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
-			Date = DateTime.Today;
-			Service = service;
 
 			AddCurfew = new DelegateCommand() { CommandAction = () => AddCurfewMethod(), CanExecuteFunc = () => SelectedUser != null };
 			DelCurfew = new DelegateCommand() { CommandAction = () => DelCurfewMethod(), CanExecuteFunc = () => SelectedCurfew != null };
 			SaveCurfews = new DelegateCommand() { CommandAction = () => SaveCurfewsMethod(), CanExecuteFunc = () => SelectedUser != null };
 			ReloadUsageLog = new DelegateCommand() { CommandAction = () => ReloadUsageLogMethod(), CanExecuteFunc = () => SelectedUser != null };
+			this.Service = service;
 		}
 
 		ObservableCollection<UsageLog> LoadUsageLog()
 		{
-			var usages = Service.Perform(_ => _.GetUsageLog(SelectedUser?.Login, Date));
+			var usages = Service.GetUsageLog(SelectedUser?.Login, Date);
 			return new ObservableCollection<UsageLog>(usages);
 		}
 
 		ObservableCollection<User> LoadUsers()
 		{
-			var users = Service.Perform(_ => _.GetUsers());
+			var users = Service.GetUsers();
 			return new ObservableCollection<User>(users);
 		}
 
 		ObservableCollection<CurfewGui> LoadCurfews()
 		{
-			var curfews = Service.Perform(_ => _.GetCurfews(SelectedUser?.Login));
+			var curfews = Service.GetCurfews(SelectedUser?.Login);
 			return new ObservableCollection<CurfewGui>(curfews.Select(_ => _.ToGui()));
 		}
 
-		public DateTime Date { get; set; }
+		public DateTime Date { get { return DateTime.Today; } }
 
 		public DataItems<User> Users { get; set; }
 
@@ -76,16 +75,18 @@ namespace client.Data
 		public void SaveCurfewsMethod()
 		{
 			var dtos = Curfews.Value.Select(_ => _.ToDto());
-			Service.Perform(_ => _.SaveCurfew(dtos.ToArray(), SelectedUser.Login));
+			Service.SaveCurfew(dtos.ToArray(), SelectedUser.Login);
 		}
 
 		public ICommand ReloadUsageLog { get; protected set; }
 		public void ReloadUsageLogMethod()
 		{
-			LoadUsageLog();
+			UsageLog.Value = LoadUsageLog();
 		}
 
 		private User _user;
+		private readonly IDataService Service;
+
 		public User SelectedUser
 		{
 			get { return _user; }
@@ -99,6 +100,6 @@ namespace client.Data
 			}
 		}
 
-		public RemoteAccess<IDataService> Service { get; }
+		//public RemoteAccess<IDataService> Service { get; }
 	}
 }

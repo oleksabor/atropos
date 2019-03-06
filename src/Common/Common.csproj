@@ -10,7 +10,7 @@
     <DefineConstants>TRACE;LIBLOG_PUBLIC</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.6.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.7.0" />
     <PackageReference Include="Grpc" Version="1.19.0" />
     <PackageReference Include="Grpc.Tools" Version="1.19.0">
       <PrivateAssets>all</PrivateAssets>

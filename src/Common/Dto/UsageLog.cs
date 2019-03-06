@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Atropos.Common.DateTimeConv;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,20 +11,20 @@ namespace Atropos.Common.Dto
 	{
 		public TimeSpan Started
 		{
-			get { return TimeSpan.FromSeconds(StartedValue); }
-			set { StartedValue = (long)value.TotalSeconds; }
+			get { return StartedValue.ToTime(); }
+			set { StartedValue = value.ToDto(); }
 		}
 
 		public TimeSpan Used
 		{
-			get { return TimeSpan.FromSeconds(UsedValue); }
-			set { UsedValue = (long)value.TotalSeconds; }
+			get { return UsedValue.ToTime(); }
+			set { UsedValue = value.ToDto(); }
 		}
 
 		public DateTime Date
 		{
-			get { return DateTime.FromBinary(DateValue); }
-			set { DateValue = (long)value.ToBinary(); }
+			get { return DateValue.ToDate(); }
+			set { DateValue = value.ToDto(); }
 		}
 	}
 }
