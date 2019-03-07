@@ -176,6 +176,7 @@ Section "Main"
 	!insertmacro FileRegS ${serverBin} "System.Data.SQLite.dll.config"
 	!insertmacro FileRegS ${serverBin} "Topshelf.dll"
 	!insertmacro FileRegS ${serverBin} "Topshelf.LibLog.dll"
+	!insertmacro FileRegS ${serverBin} "System.Interactive.Async.dll"
 	SetOutPath "$INSTDIR\server\x86"
 	!insertmacro FileRegS "${serverBin}" "x86\SQLite.Interop.dll"
 	SetOutPath "$INSTDIR\server\x64"
@@ -205,6 +206,7 @@ Section "Main"
 	!insertmacro FileRegC ${clientBin} "libgrpc_csharp_ext.x86.dylib"
 	!insertmacro FileRegC ${clientBin} "libgrpc_csharp_ext.x86.so"
 	!insertmacro FileRegC ${clientBin} "Nerdle.AutoConfig.dll"
+	!insertmacro FileRegC ${clientBin} "System.Interactive.Async.dll"
 
 	WriteRegStr HKLM ${regKeyStr} "installed_files" $conpath
 	

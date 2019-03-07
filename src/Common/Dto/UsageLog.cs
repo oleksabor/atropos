@@ -26,5 +26,11 @@ namespace Atropos.Common.Dto
 			get { return DateValue.ToDate(); }
 			set { DateValue = value.ToDto(); }
 		}
+
+		public TimeSpan Finished
+		{
+			get { return FinishedValue.ToTime(); }
+			set { FinishedValue = value.ToDto(); }
+		}
 	}
 }

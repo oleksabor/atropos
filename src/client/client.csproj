@@ -93,8 +93,11 @@
     <Compile Include="Data\DataItem.cs" />
     <Compile Include="Data\DataLoader.cs" />
     <Compile Include="Data\DayOfWeekGui.cs" />
+    <Compile Include="Data\ErrorsChanger.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />
     <Compile Include="IconViewModel.cs" />
+    <Compile Include="Wpf\Bool2Visibility.cs" />
+    <Compile Include="Wpf\DateTimeConverter.cs" />
     <Compile Include="Wpf\DelegateCommand.cs" />
     <Compile Include="Wpf\TimespanConverter.cs" />
     <Page Include="MainWindow.xaml">

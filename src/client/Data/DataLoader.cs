@@ -1,4 +1,5 @@
 ﻿using Atropos.Common;
+using Atropos.Common.DateTimeConv;
 using Atropos.Common.Dto;
 using client.Wpf;
 using client.Wpf.Data;
@@ -15,6 +16,9 @@ namespace client.Data
 	{
 		public DataLoader(IDataService service)
 		{
+			this.Service = service;
+			date = DateTime.Today;
+
 			Users = new DataItems<User>(LoadUsers);
 			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
@@ -23,12 +27,17 @@ namespace client.Data
 			DelCurfew = new DelegateCommand() { CommandAction = () => DelCurfewMethod(), CanExecuteFunc = () => SelectedCurfew != null };
 			SaveCurfews = new DelegateCommand() { CommandAction = () => SaveCurfewsMethod(), CanExecuteFunc = () => SelectedUser != null };
 			ReloadUsageLog = new DelegateCommand() { CommandAction = () => ReloadUsageLogMethod(), CanExecuteFunc = () => SelectedUser != null };
-			this.Service = service;
 		}
 
 		ObservableCollection<UsageLog> LoadUsageLog()
 		{
 			var usages = Service.GetUsageLog(SelectedUser?.Login, Date);
+
+			if (usages != null && usages.Any())
+				UsedTotal = usages.Sum(_ => _.UsedValue).ToTime();
+			else
+				UsedTotal = TimeSpan.Zero;
+
 			return new ObservableCollection<UsageLog>(usages);
 		}
 
@@ -44,13 +53,35 @@ namespace client.Data
 			return new ObservableCollection<CurfewGui>(curfews.Select(_ => _.ToGui()));
 		}
 
-		public DateTime Date { get { return DateTime.Today; } }
+		DateTime date;
+		public DateTime Date { get { return date; } set { if (Set(ref date, value)) ReloadUsageLogMethod(); } }
+
+		public DateTime Today => DateTime.Today;
 
 		public DataItems<User> Users { get; set; }
 
 		public DataItems<UsageLog> UsageLog { get; set; }
 
 		public DataItems<CurfewGui> Curfews { get; set; }
+
+		public bool IsNotAdmin { get { return !IsAdmin; } }
+		public bool IsAdmin
+		{
+			get
+			{
+				isAdmin = isAdmin ?? new UserPrivilege().IsAdmin();
+				return isAdmin.GetValueOrDefault();
+			}
+		}
+
+		bool? isAdmin;
+
+		TimeSpan _usedTotal;
+		public TimeSpan UsedTotal
+		{
+			get { return _usedTotal; }
+			set { Set(ref _usedTotal, value); }
+		}
 
 		CurfewGui _selectedCurfew;
 		public CurfewGui SelectedCurfew { get { return _selectedCurfew; } set { Set(ref _selectedCurfew, value); } }

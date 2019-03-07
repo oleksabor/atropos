@@ -45,8 +45,14 @@ namespace client.Wpf
 				throw new NullReferenceException("no Connection element");
 			var remote = new DataServiceRemote(config.Connection);
 			var dataLoader = new DataLoader(remote);
-			dataLoader.Users.LoadAsync();
+			dataLoader.Users.LoadAsync().ContinueWith(CheckTaskStatus);
 			return dataLoader;
+		}
+
+		void CheckTaskStatus(Task task)
+		{
+			if (task.Exception != null)
+				Log.ErrorException("failed to execute task", task.Exception);
 		}
 
 		protected override void OnExit(ExitEventArgs e)

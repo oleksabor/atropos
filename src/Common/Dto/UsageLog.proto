@@ -7,4 +7,5 @@ message UsageLog {
 	int64 usedValue = 3;
 	int64 startedValue = 4;
 	int64 dateValue = 5;
+	int64 finishedValue = 6;
 }
