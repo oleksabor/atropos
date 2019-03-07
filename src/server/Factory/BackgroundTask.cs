@@ -119,10 +119,12 @@ namespace Atropos.Server.Factory
 				{
 					Running = true;
 					Run();
+					errorCount = 0;
 				}
 				catch (Exception e)
 				{
-					Log.ErrorException("run error", e);
+					Log.ErrorException($"run error {ClassName}", e);
+					HandleFault?.Invoke(e, ++errorCount);
 				}
 				finally
 				{
@@ -145,5 +147,15 @@ namespace Atropos.Server.Factory
 			for (int q = 0; q < time2sleep && !cncl.IsCancellationRequested; q++)
 				Thread.Sleep(sleepTime);
 		}
+
+		/// <summary>
+		/// Gets or sets the fault handler.
+		/// </summary>
+		/// <value>
+		/// The fault handler.
+		/// </value>
+		public Action<Exception, int> HandleFault { get; set; }
+
+		protected int errorCount { get; set; }
 	}
 }

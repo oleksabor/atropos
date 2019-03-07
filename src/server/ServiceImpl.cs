@@ -45,6 +45,7 @@ namespace Atropos.Server
 			try
 			{
 				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
+				_accounter.HandleFault = (ex, count) => ThreadFault(ex, count, hostControl);
 
 				DoAllTasks(_tasks, t =>	t.Start());
 
@@ -57,6 +58,17 @@ namespace Atropos.Server
 			}
 			Log.Trace("started");
 			return true;
+		}
+
+		int threadsErrorCount;
+
+		void ThreadFault(Exception e, int errorCount, HostControl hc)
+		{
+			if (errorCount > 5 || ++threadsErrorCount > 5)
+			{
+				Log.ErrorException($"too many errors:{errorCount} or threadErrors:{threadsErrorCount}, service is going to be stopped", e);
+				hc.Stop(TopshelfExitCode.AbnormalExit);
+			}
 		}
 
 		void DoAllTasks(IEnumerable<BackgroundTask> tasks, Action<BackgroundTask> dotask)
