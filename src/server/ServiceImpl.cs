@@ -1,4 +1,5 @@
-﻿using Atropos.Common.Logging;
+﻿using Atropos.Common.Dto;
+using Atropos.Common.Logging;
 using Atropos.Server.Db;
 using Atropos.Server.Event;
 using Atropos.Server.Factory;
@@ -27,9 +28,9 @@ namespace Atropos.Server
 
 		static ILog Log = LogProvider.GetCurrentClassLogger();
 
-		public DataServiceHost<DataService> Host { get; }
+		public DataServiceHost Host { get; }
 
-		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost<DataService> host)
+		public ServiceImpl(Woodpecker listener, Accounter accounter, StorageTool stTool, Locker locker, DataServiceHost host)
 		{
 			listener.OnFound += data => _accounter.Changed(data);
 			_accounter = accounter;
@@ -44,8 +45,11 @@ namespace Atropos.Server
 			try
 			{
 				_stTool.CheckDb(); // TODO start in new thread to reduce Start execution time ?
+				_accounter.HandleFault = (ex, count) => ThreadFault(ex, count, hostControl);
 
 				DoAllTasks(_tasks, t =>	t.Start());
+
+				Host.Start();
 			}
 			catch (Exception e)
 			{
@@ -54,6 +58,17 @@ namespace Atropos.Server
 			}
 			Log.Trace("started");
 			return true;
+		}
+
+		int threadsErrorCount;
+
+		void ThreadFault(Exception e, int errorCount, HostControl hc)
+		{
+			if (errorCount > 5 || ++threadsErrorCount > 5)
+			{
+				Log.ErrorException($"too many errors:{errorCount} or threadErrors:{threadsErrorCount}, service is going to be stopped", e);
+				hc.Stop(TopshelfExitCode.AbnormalExit);
+			}
 		}
 
 		void DoAllTasks(IEnumerable<BackgroundTask> tasks, Action<BackgroundTask> dotask)
@@ -72,6 +87,8 @@ namespace Atropos.Server
 		public bool Stop(HostControl hostControl)
 		{
 			Log.Debug("stopping");
+
+			Host.Stop();
 
 			DoAllTasks(_tasks, t => t.Stop());
 

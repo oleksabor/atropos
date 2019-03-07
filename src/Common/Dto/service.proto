@@ -1,0 +1,30 @@
+﻿syntax = "proto3";
+package Atropos.Common.Dto;
+
+import "dto/User.proto";
+import "dto/UsageLog.proto";
+import "dto/Curfew.proto";
+
+import "google/protobuf/empty.proto";
+
+service DataService {
+		rpc GetUsers(google.protobuf.Empty) returns (stream User) {}
+		rpc GetCurfews(CurfewRequest) returns (stream Curfew) {}
+		rpc GetUsageLog(UsageLogRequest) returns (stream UsageLog) {}
+		rpc SaveCurfew(SaveCurfewRequest) returns (google.protobuf.Empty) {}
+}
+
+message CurfewRequest {
+	string login  = 1;
+}
+
+message UsageLogRequest {
+	string login = 1;
+	int64 dateValue = 2;
+}
+
+message SaveCurfewRequest {
+	string login = 1;
+	repeated Curfew values = 2;
+}
+

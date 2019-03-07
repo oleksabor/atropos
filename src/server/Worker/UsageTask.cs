@@ -40,12 +40,10 @@ namespace Atropos.Server.Worker
 		void Save(SessionData data)
 		{
 			var today = DateTime.Today;
-			var usage = _storage.GetUsage(data.User, today);
 			using (var t = _storage.BeginTransaction())
 				try
 				{
-					Log.DebugFormat("saving usage {0} {1} reason:{2}", data.User, data.Spent.TotalSeconds, data.Reason);
-					_storage.AddUsage(data.User, data.Spent, today);
+					_storage.AddUsage(data.User, data.Spent, today, 300);
 					t.Commit();
 				}
 				catch (Exception e)

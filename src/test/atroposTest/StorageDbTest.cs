@@ -105,7 +105,7 @@ namespace atroposTest.Db
 			{
 				using (var t = s.BeginTransaction())
 				{
-					usage = s.AddUsage(Login, ts, n.Date);
+					usage = s.AddUsage(Login, ts, n.Date, 900);
 
 					t.Commit();
 				}

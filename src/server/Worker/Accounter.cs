@@ -75,7 +75,7 @@ namespace Atropos.Server.Worker
 
 			_marker.Clear();
 			if (data.Reason != Kind.Active) // like Connected
-				Log.TraceFormat("adding session data reason:{0} spent:{1}", data.Reason, data.Spent);
+				Log.DebugFormat("adding session data reason:{0} spent:{1}", data.Reason, data.Spent);
 			_items.Enqueue(data);
 		}
 

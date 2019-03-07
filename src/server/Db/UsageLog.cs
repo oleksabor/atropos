@@ -15,6 +15,7 @@ namespace Atropos.Server.Db
 		[Column]				public DateTime Date { get; set; }
 		[Column]				public TimeSpan Started { get; set; }
 		[Column]				public TimeSpan Used { get; set; }
+		[Column]				public TimeSpan Finished { get; set; }
 	
 		/// <summary>
 		/// FK_User_BackReference

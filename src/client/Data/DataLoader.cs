@@ -1,8 +1,8 @@
 ﻿using Atropos.Common;
+using Atropos.Common.DateTimeConv;
 using Atropos.Common.Dto;
 using client.Wpf;
 using client.Wpf.Data;
-using com.Tools.WcfHosting;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,15 +12,16 @@ using System.Windows.Input;
 
 namespace client.Data
 {
-	public class DataLoader : PropertyChangedBase
+	public class DataLoader : PropertyChangedBase, IDisposable
 	{
-		public DataLoader(RemoteAccess<IDataService> service)
+		public DataLoader(IDataService service)
 		{
+			this.Service = service;
+			date = DateTime.Today;
+
 			Users = new DataItems<User>(LoadUsers);
 			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
-			Date = DateTime.Today;
-			Service = service;
 
 			AddCurfew = new DelegateCommand() { CommandAction = () => AddCurfewMethod(), CanExecuteFunc = () => SelectedUser != null };
 			DelCurfew = new DelegateCommand() { CommandAction = () => DelCurfewMethod(), CanExecuteFunc = () => SelectedCurfew != null };
@@ -30,29 +31,57 @@ namespace client.Data
 
 		ObservableCollection<UsageLog> LoadUsageLog()
 		{
-			var usages = Service.Perform(_ => _.GetUsageLog(SelectedUser?.Login, Date));
+			var usages = Service.GetUsageLog(SelectedUser?.Login, Date);
+
+			if (usages != null && usages.Any())
+				UsedTotal = usages.Sum(_ => _.UsedValue).ToTime();
+			else
+				UsedTotal = TimeSpan.Zero;
+
 			return new ObservableCollection<UsageLog>(usages);
 		}
 
 		ObservableCollection<User> LoadUsers()
 		{
-			var users = Service.Perform(_ => _.GetUsers());
+			var users = Service.GetUsers();
 			return new ObservableCollection<User>(users);
 		}
 
 		ObservableCollection<CurfewGui> LoadCurfews()
 		{
-			var curfews = Service.Perform(_ => _.GetCurfews(SelectedUser?.Login));
+			var curfews = Service.GetCurfews(SelectedUser?.Login);
 			return new ObservableCollection<CurfewGui>(curfews.Select(_ => _.ToGui()));
 		}
 
-		public DateTime Date { get; set; }
+		DateTime date;
+		public DateTime Date { get { return date; } set { if (Set(ref date, value)) ReloadUsageLogMethod(); } }
+
+		public DateTime Today => DateTime.Today;
 
 		public DataItems<User> Users { get; set; }
 
 		public DataItems<UsageLog> UsageLog { get; set; }
 
 		public DataItems<CurfewGui> Curfews { get; set; }
+
+		public bool IsNotAdmin { get { return !IsAdmin; } }
+		public bool IsAdmin
+		{
+			get
+			{
+				isAdmin = isAdmin ?? new UserPrivilege().IsAdmin();
+				return isAdmin.GetValueOrDefault();
+			}
+		}
+
+		bool? isAdmin;
+
+		TimeSpan _usedTotal;
+		public TimeSpan UsedTotal
+		{
+			get { return _usedTotal; }
+			set { Set(ref _usedTotal, value); }
+		}
 
 		CurfewGui _selectedCurfew;
 		public CurfewGui SelectedCurfew { get { return _selectedCurfew; } set { Set(ref _selectedCurfew, value); } }
@@ -76,16 +105,24 @@ namespace client.Data
 		public void SaveCurfewsMethod()
 		{
 			var dtos = Curfews.Value.Select(_ => _.ToDto());
-			Service.Perform(_ => _.SaveCurfew(dtos.ToArray(), SelectedUser.Login));
+			Service.SaveCurfew(dtos.ToArray(), SelectedUser.Login);
 		}
 
 		public ICommand ReloadUsageLog { get; protected set; }
 		public void ReloadUsageLogMethod()
 		{
-			LoadUsageLog();
+			UsageLog.Value = LoadUsageLog();
+		}
+
+		public void Dispose()
+		{
+			if (Service != null)
+				Service.Dispose();
 		}
 
 		private User _user;
+		private readonly IDataService Service;
+
 		public User SelectedUser
 		{
 			get { return _user; }
@@ -98,7 +135,5 @@ namespace client.Data
 				}
 			}
 		}
-
-		public RemoteAccess<IDataService> Service { get; }
 	}
 }

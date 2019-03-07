@@ -1,0 +1,11 @@
+syntax = "proto3";
+package Atropos.Common.Dto;
+
+message UsageLog {
+	int32 id = 1;
+	int32 userId = 2;
+	int64 usedValue = 3;
+	int64 startedValue = 4;
+	int64 dateValue = 5;
+	int64 finishedValue = 6;
+}

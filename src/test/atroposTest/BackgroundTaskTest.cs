@@ -44,6 +44,27 @@ namespace atroposTest.Factory
 		}
 
 		[TestCase]
+		public void RunExceptionHandler()
+		{
+			var runCount = 0;
+
+			int errCount = 0;
+
+			var rt = MockRepository.Mock<BackgroundTask>();
+			rt.Stub(_ => _.Run()).WhenCalled(() => { runCount++; throw new NotImplementedException(); });
+
+			rt.HandleFault = (e, c) => errCount = c;
+
+			rt.Start(1);
+			Thread.Sleep(3000);
+			rt.Stop();
+
+			Assert.IsTrue(runCount >= 3);
+
+			Assert.IsTrue(errCount >= 3);
+		}
+
+		[TestCase]
 		public void StartMoreThanOnce()
 		{
 			int runCount = 0;

@@ -22,7 +22,7 @@ param([string]$version, [string]$sources)
 	$SrcPath = $sources
     Write-Verbose "Executing Update-AssemblyInfoVersionFiles in path $SrcPath for product version Version $buildNumber"  -Verbose
  
-    $AllVersionFiles = Get-ChildItem $SrcPath AssemblyInfo.cs -recurse
+    $AllVersionFiles = Get-ChildItem $SrcPath -Include AssemblyInfo.cs,*.AssemblyInfo.cs -recurse | Where {$_.FullName -notlike "*\obj\*"}
 
 	#calculation Julian Date 
 	$year = Get-Date -format yy

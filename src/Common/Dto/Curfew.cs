@@ -1,28 +1,24 @@
-﻿using System;
+﻿using Atropos.Common.DateTimeConv;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace Atropos.Common.Dto
 {
-	[DataContract(Namespace = Ns)]
-	[XmlRoot(Namespace = Ns + "/curfew")]
-	public class Curfew : IdDto
+	public sealed partial class Curfew
 	{
-		[DataMember(IsRequired = true)]
-		public int UserId { get; set; }
+		public TimeSpan Break
+		{
+			get { return BreakValue.ToTime(); }
+			set { BreakValue = value.ToDto(); }
+		}
 
-		[DataMember(IsRequired = true)]
-		public string WeekDay { get; set; }
-
-		[DataMember(IsRequired = true)]
-		public TimeSpan Time { get; set; }
-
-		[DataMember]
-		public TimeSpan Break { get; set; }
+		public TimeSpan Time
+		{
+			get { return TimeValue.ToTime(); }
+			set { TimeValue = value.ToDto(); }
+		}
 	}
 }

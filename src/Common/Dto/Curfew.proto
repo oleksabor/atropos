@@ -1,0 +1,10 @@
+syntax = "proto3";
+package Atropos.Common.Dto;
+
+message Curfew {
+	int32 id = 1;
+	string weekDay = 2;
+	int32 userId = 3;
+	int64 timeValue = 4;
+	int64 breakValue = 5;
+}
