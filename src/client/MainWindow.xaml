@@ -9,6 +9,7 @@
         >
 	<Window.Resources>
 		<local:TimespanConverter x:Key="ts2str" />
+		<local:DateTimeConverter x:Key="dt2str" />
 	</Window.Resources>
 	<Grid >
 		<Grid.RowDefinitions>
@@ -18,7 +19,7 @@
 		<Border Grid.Row="0">
 			<StackPanel Orientation="Vertical">
 				<TextBlock Text="users" FontSize="21" Grid.Column="0"/>
-				<ListBox ItemsSource="{Binding Users.Value}" SelectedItem="{Binding SelectedUser}" Grid.Column="1">
+				<ListBox ItemsSource="{Binding Users.Value, ValidatesOnNotifyDataErrors=True}" SelectedItem="{Binding SelectedUser}" Grid.Column="1">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">
@@ -48,7 +49,7 @@
 				</StackPanel>
 			</StackPanel>
 
-			<DataGrid ItemsSource="{Binding Curfews.Value}" SelectedItem="{Binding SelectedCurfew}" Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+			<DataGrid ItemsSource="{Binding Curfews.Value, ValidatesOnNotifyDataErrors=True}" SelectedItem="{Binding SelectedCurfew}" Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
 				<DataGrid.Columns>
 					<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
@@ -85,17 +86,13 @@
 				<TextBlock  Text="usage log" FontSize="21"/>
 				<StackPanel Orientation="Horizontal">
 					<Button Content=" refresh " Margin="3" Command="{Binding ReloadUsageLog}" />
+					<DatePicker SelectedDate="{Binding Date}" Margin="3" DisplayDateEnd="{Binding Today, Mode=OneWay}" />
+					<TextBlock Text="used" Margin="3" />
+					<TextBox Text="{Binding UsedTotal, Converter={StaticResource ts2str}}" IsReadOnly="True" Margin="3" />
 				</StackPanel>
 			</StackPanel>
-			<DataGrid ItemsSource="{Binding UsageLog.Value}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+			<DataGrid ItemsSource="{Binding UsageLog.Value, ValidatesOnNotifyDataErrors=True}"  Grid.Column="1" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
 					<DataGrid.Columns>
-						<DataGridTemplateColumn Header="Date" Width="SizeToCells" IsReadOnly="True">
-							<DataGridTemplateColumn.CellTemplate>
-								<DataTemplate>
-								<DatePicker SelectedDate="{Binding Date}" SelectedDateFormat="Short" />
-								</DataTemplate>
-							</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
 						<DataGridTemplateColumn Header="Started" Width="SizeToCells" IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
@@ -110,7 +107,14 @@
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>
-					</DataGrid.Columns>
+					<DataGridTemplateColumn Header="Finished" Width="SizeToCells" IsReadOnly="True">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<TextBox Text="{Binding Finished, Converter={StaticResource ts2str}}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
 				</DataGrid>
 		</Grid>
 	</Grid>
