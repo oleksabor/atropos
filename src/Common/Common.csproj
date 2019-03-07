@@ -20,11 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLog" Version="4.5.11">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="NLog.IndentException" Version="0.1.7" />
+    <PackageReference Include="NLog.IndentException" Version="0.1.9" />
   </ItemGroup>
   <ItemGroup>
     <Protobuf Include="dto/*.proto" CompileOutputs="true" />
