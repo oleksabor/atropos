@@ -64,6 +64,18 @@ namespace client.Data
 
 		public DataItems<CurfewGui> Curfews { get; set; }
 
+		public bool IsNotAdmin { get { return !IsAdmin; } }
+		public bool IsAdmin
+		{
+			get
+			{
+				isAdmin = isAdmin ?? new UserPrivilege().IsAdmin();
+				return isAdmin.GetValueOrDefault();
+			}
+		}
+
+		bool? isAdmin;
+
 		TimeSpan _usedTotal;
 		public TimeSpan UsedTotal
 		{

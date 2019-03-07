@@ -42,14 +42,15 @@
 			</Grid.RowDefinitions>
 			<StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical">
 				<TextBlock Text="curfews" FontSize="21"/>
-				<StackPanel Orientation="Horizontal">
-					<Button Content=" add " Margin="3" Command="{Binding AddCurfew}" />
-					<Button Content=" delete " Margin="3" Command="{Binding DelCurfew}" />
-					<Button Content=" save " Margin="3" Command="{Binding SaveCurfews}" />
+				<StackPanel Orientation="Horizontal" >
+					<Button Content=" add " Margin="3" Command="{Binding AddCurfew}" IsEnabled="{Binding IsAdmin, Mode=OneWay}" />
+					<Button Content=" delete " Margin="3" Command="{Binding DelCurfew}" IsEnabled="{Binding IsAdmin, Mode=OneWay}"/>
+					<Button Content=" save " Margin="3" Command="{Binding SaveCurfews}" IsEnabled="{Binding IsAdmin, Mode=OneWay}"/>
 				</StackPanel>
 			</StackPanel>
 
-			<DataGrid ItemsSource="{Binding Curfews.Value, ValidatesOnNotifyDataErrors=True}" SelectedItem="{Binding SelectedCurfew}" Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False">
+			<DataGrid ItemsSource="{Binding Curfews.Value, ValidatesOnNotifyDataErrors=True}" SelectedItem="{Binding SelectedCurfew}"   
+					  Grid.Column="0" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="{Binding IsNotAdmin, Mode=OneTime}" >
 				<DataGrid.Columns>
 					<DataGridTemplateColumn Header="Week day" Width="SizeToCells" IsReadOnly="True">
 						<DataGridTemplateColumn.CellTemplate>
