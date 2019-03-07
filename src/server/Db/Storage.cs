@@ -34,7 +34,7 @@ namespace Atropos.Server.Db
 			return db.BeginTransaction();
 		}
 
-		public UsageLog AddUsage(string login, TimeSpan value, DateTime date)
+		public UsageLog AddUsage(string login, TimeSpan value, DateTime date, int secondsFinished)
 		{
 			login = login?.Trim();
 			if (login.IsEmpty())
@@ -42,11 +42,29 @@ namespace Atropos.Server.Db
 
 			var user = AddUser(login, $"auto {login}");
 
-			db.UsageLogs.InsertOrUpdate(() => new UsageLog { Started = DateTime.Now.TimeOfDay, UserId = user.Id, Date = date, Used = value }, 
-				_ => new UsageLog { Used = _.Used + value }, 
-				() => new UsageLog { Date = date, UserId = user.Id });
+			var now = DateTime.Now.TimeOfDay;
+			var fiveMinutesBefore = now.Add(TimeSpan.FromSeconds(secondsFinished).Negate());
 
-			return GetUsage(login, date).LastOrDefault();
+			var usedBefore = from ul in db.UsageLogs
+							 join u in db.Users on ul.UserId equals u.Id
+							 where u.Login == login
+							 && ul.Date == date
+							 orderby ul.Id descending
+							 select ul;
+
+			if (usedBefore.Any()) 
+			{
+				var used = usedBefore.First(); // .Last or .LastOrDefault fails to be converted to the SQL
+
+				if (used.Finished >= fiveMinutesBefore)
+				{
+					db.UsageLogs.Update(_ => _.Id == used.Id, _ => new UsageLog { Used = _.Used + value, Finished = now });
+					return used;
+				}
+			}
+			var started = now.Add(value.Negate());
+			var id = db.UsageLogs.InsertWithInt32Identity(() => new UsageLog { Started = started, UserId = user.Id, Date = date, Used = value, Finished = now });
+			return db.UsageLogs.First(_ => _.Id == id);
 		}
 
 		public virtual IEnumerable<UsageLog> GetUsage(string login, DateTime date)
@@ -55,6 +73,7 @@ namespace Atropos.Server.Db
 						join u in db.Users on ul.UserId equals u.Id
 						where ul.Date == date 
 						&& u.Login == login
+						orderby ul.Id
 						select ul;
 			if (!usage.Any())
 				Log.WarnFormat("no usage found for user:{0} on date:{1}", login, date);
