@@ -49,21 +49,44 @@ namespace Atropos.Server.Worker
 		public UsageResult Check(IEnumerable<Curfew> curFews, int day, IEnumerable<UsageLog> usages)
 		{
 			var curfew = curFews.OrderBy(_ => _.Time).FirstOrDefault(_ => _.WeekDay.IsWeekDay(day, Log));
-			var usage = usages.LastOrDefault();
-			if (curfew != null)
-			{
-				if (curfew.Time < usage.Used)
-					return new UsageResult { Kind = UsageResultKind.Blocked, Used = usage.Used };
 
-				// not enough data to understand how many time passed since user started to use the computer
-				//if (curfew.Break > TimeSpan.Zero)
-				//{
-				//	var beforeBreak = curfew.Time.TotalSeconds / 2;
-				//	if (usage.Used > TimeSpan.FromSeconds(beforeBreak))
-				//		return UsageResult.Break;
-				//}
+			var cp = new CheckParameter(curfew?.Time, curfew?.Break, usages);
+
+			var kind = curfew == null 
+				? UsageResultKind.NoRestriction 
+				: CheckKind(cp);
+
+			return new UsageResult { Kind = kind, Used = TimeSpan.FromSeconds(cp.UsedSeconds) };
+		}
+
+		public UsageResultKind CheckKind(CheckParameter cp)
+		{
+			if (cp.AllowedTime < cp.UsedSeconds)
+				return UsageResultKind.Blocked;
+
+			// not enough data to understand how many time passed since user started to use the computer
+			if (cp.BreakTime> 0)
+			{
+				UsageLog beforeBreak = null;
+				var usedBeforeBreak = 0D;
+
+				var usagesArray = cp.Usages.ToArray();
+				for (int q = 0; q < usagesArray.Length - 1; q++)
+				{
+					var bb = usagesArray[q];
+					var ab = usagesArray[q + 1];
+
+					if (bb.Finished.TotalSeconds + cp.BreakTime * cp.BreakCorrector <= ab.Started.TotalSeconds)
+					{
+						beforeBreak = bb;
+						usedBeforeBreak = cp.Usages.Where(_ => _.Started < ab.Started).Sum(_ => _.Used.TotalSeconds);
+					}
+				}
+
+				if (beforeBreak == null && cp.UsedSeconds > cp.AllowedTime / 2)
+					return UsageResultKind.BreakRequired;
 			}
-			return new UsageResult { Kind = UsageResultKind.NoRestriction, Used = usage.Used };
+			return UsageResultKind.NoRestriction;
 		}
 
 		public override void DisposeIt()

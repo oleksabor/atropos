@@ -10,7 +10,7 @@ namespace Atropos.Common
 	{
 		Unknown, 
 		NoRestriction,
-		Break,
+		BreakRequired,
 		Blocked,
 	}
 
