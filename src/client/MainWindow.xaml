@@ -14,7 +14,8 @@
 	<Grid >
 		<Grid.RowDefinitions>
 			<RowDefinition  Height="3*"/>
-			<RowDefinition Height="7*"/>
+			<RowDefinition Height="3*"/>
+			<RowDefinition Height="6*"/>
 		</Grid.RowDefinitions>
 		<Border Grid.Row="0">
 			<StackPanel Orientation="Vertical">
@@ -31,7 +32,53 @@
 				</ListBox>
 			</StackPanel>
 		</Border>
-		<Grid Grid.Row="1">
+		<GroupBox Grid.Row="1">
+			<ItemsControl ItemsSource="{Binding WeekUsages.Value}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"></StackPanel>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Margin="20,0,20,0" VerticalAlignment="Bottom">
+							<TextBlock HorizontalAlignment="Center" 
+                                   FontFamily="Latha" Text="{Binding Used, Converter={StaticResource ts2str}}">
+								<!--<TextBlock.RenderTransform>
+									<TranslateTransform Y="-20"/>
+								</TextBlock.RenderTransform>-->
+							</TextBlock>
+							<Border Name="br" Margin="3,5,3,0"  CornerRadius="5" 
+                                Background="{Binding Color}"
+                                Width="40" BorderBrush="{Binding Color}"  
+                                BorderThickness="3" 
+                                Height="{Binding UsedMinutes}">
+								<Border.Triggers>
+									<EventTrigger RoutedEvent="Border.Loaded">
+										<BeginStoryboard>
+											<Storyboard>
+												<DoubleAnimation From="0"  
+                                                             Storyboard.TargetName="br" 
+                                 Storyboard.TargetProperty="(FrameworkElement.Height)" 
+                                                              Duration="0:0:02.0">
+
+												</DoubleAnimation>
+											</Storyboard>
+										</BeginStoryboard>
+									</EventTrigger>
+								</Border.Triggers>
+							</Border>
+							<TextBlock HorizontalAlignment="Center" Foreground="{Binding Color}"
+                                   FontFamily="Latha" 
+                                   Text="{Binding Day}">
+							</TextBlock>
+						</StackPanel>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</GroupBox>
+		<Grid Grid.Row="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="6*"/>
 				<ColumnDefinition Width="4*"/>

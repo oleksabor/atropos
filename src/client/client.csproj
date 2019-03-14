@@ -95,6 +95,7 @@
     <Compile Include="Data\DayOfWeekGui.cs" />
     <Compile Include="Data\ErrorsChanger.cs" />
     <Compile Include="Data\PropertyChangedBase.cs" />
+    <Compile Include="Data\UsageWeekLog.cs" />
     <Compile Include="IconViewModel.cs" />
     <Compile Include="Wpf\Bool2Visibility.cs" />
     <Compile Include="Wpf\DateTimeConverter.cs" />
