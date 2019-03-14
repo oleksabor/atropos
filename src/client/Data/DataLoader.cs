@@ -22,6 +22,7 @@ namespace client.Data
 			Users = new DataItems<User>(LoadUsers);
 			UsageLog = new DataItems<UsageLog>(LoadUsageLog);
 			Curfews = new DataItems<CurfewGui>(LoadCurfews);
+			WeekUsages = new DataItems<UsageWeekLog>(LoadWeekUsage);
 
 			AddCurfew = new DelegateCommand() { CommandAction = () => AddCurfewMethod(), CanExecuteFunc = () => SelectedUser != null };
 			DelCurfew = new DelegateCommand() { CommandAction = () => DelCurfewMethod(), CanExecuteFunc = () => SelectedCurfew != null };
@@ -53,6 +54,35 @@ namespace client.Data
 			return new ObservableCollection<CurfewGui>(curfews.Select(_ => _.ToGui()));
 		}
 
+#if DEBUG
+		static Random random = new Random();
+
+		public static bool RandomizeIfZero = true;
+#endif
+
+		ObservableCollection<UsageWeekLog> LoadWeekUsage()
+		{
+			var today = DateTime.Today;
+			var res = new ObservableCollection<UsageWeekLog>();
+
+			for (int q = 0; q < 7; q++)
+			{
+				var date = today.AddDays(-q);
+				var usages = Service.GetUsageLog(SelectedUser?.Login, date);
+
+				var used = usages.Sum(_ => _.Used.ToDto()).ToTime();
+				var weekUsage = new UsageWeekLog(date.DayOfWeek, used);
+
+#if DEBUG
+				if (RandomizeIfZero && weekUsage.Used == TimeSpan.Zero)
+					weekUsage.Used = TimeSpan.FromMinutes(random.Next(20, 900)); // 15 hours * 60 minutes
+#endif
+
+				res.Insert(0, weekUsage);
+			}
+			return res;
+		}
+
 		DateTime date;
 		public DateTime Date { get { return date; } set { if (Set(ref date, value)) ReloadUsageLogMethod(); } }
 
@@ -63,6 +93,14 @@ namespace client.Data
 		public DataItems<UsageLog> UsageLog { get; set; }
 
 		public DataItems<CurfewGui> Curfews { get; set; }
+
+		/// <summary>
+		/// Gets or sets the week usages.
+		/// </summary>
+		/// <value>
+		/// The week usages.
+		/// </value>
+		public DataItems<UsageWeekLog> WeekUsages { get; set; }
 
 		public bool IsNotAdmin { get { return !IsAdmin; } }
 		public bool IsAdmin
@@ -112,6 +150,7 @@ namespace client.Data
 		public void ReloadUsageLogMethod()
 		{
 			UsageLog.Value = LoadUsageLog();
+			WeekUsages.Value = LoadWeekUsage();
 		}
 
 		public void Dispose()
@@ -132,6 +171,7 @@ namespace client.Data
 				{
 					Curfews.LoadAsync();
 					UsageLog.LoadAsync();
+					WeekUsages.LoadAsync();
 				}
 			}
 		}

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Atropos.Server.Db
 {
-	public class UsageLog
+	public partial class UsageLog
 	{
 		[PrimaryKey, Identity]	public int Id		{ get; set; }
 		[Column]				public int UserId	{ get; set; }

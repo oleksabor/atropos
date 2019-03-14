@@ -4,9 +4,20 @@ It has been developed since Windows 10 allows to manage curfew for Microsoft bas
 
 The problem is that this functionality has gone for local accounts in Windows 10.
 
-The idea it to manage certain local account curfew from local administrator account. 
+The idea it to manage certain local account curfew from local administrator account. Or you can leave curfew empty and use Atropos as additional argument to help your child set up daily tasks.
 
-Atropos has two major components - server and client.
+Atropos has two major components - server and client. Service is started using local system account. Service checks is computer used and should it be blocked or not.
+
+Client is started under current user account and can be used to check how many time had been used by user.
+
+### client
+
+This is small application that shows registred users that can be restricted with curfew. Read only.
+
+![client window](doc/images/clientWindow.png)
+
+Curfew are editable (but there is no validation yet). Users list still is read-only. You have to login with each user to edit curfew.
+ 
 
 ### server
 
@@ -29,11 +40,11 @@ You can use GUI setup or install service and client manually
 
 ##### GUI setup
 
-Please download the latest setup package from [Releases](./releases) and run it. The serice will be installed and started automatically.
+Please download the latest setup package from the Releases and run it. The serice will be installed and started automatically. Setup files are named _atropos.VERSIONNUMBER.exe_
 
 ##### manual installation 
 
-Please download client and service binaries from [Releases](./releases) and extract archives to the local drive.
+Please download client and service binaries from the Releases and extract archives to the local drive. Client and service zip files are named _atroposClientRelease.VERSIONNUMBER.7z_ and _atroposServiceRelease.VERSIONNUMBER.7z_
 
 You have to 
 * [install service](https://topshelf.readthedocs.io/en/latest/overview/commandline.html#topshelf-command-line-reference) by running `atropos.server install --localsystem` from command line using elevated command prompt (Run As Administrator). This will install service that is started using built-in LocalSystem Windows account.
@@ -43,19 +54,10 @@ client executable has to be placed somewhere on the computer. When started it wi
 
 #### configuration
 
-Any SQLite tool can be used to adjust database configuration, like `DBBrowser for SQLite` e.g.
+Atropos client that is started as local administrator can be used to adjust curfew for local users. You can add, edit or remove user's curfews using approtpriate buttons on the client form.
 
-* login with each user that is going to be controlled or create users manually in the `User` data table. `Login` has to the same as it is set in Windows and `Name` can be any value.
-* manually insert `Curfew` records to the database. `Time` is a time allowed to use the computer, in seconds. `WeekDay` column value is paraterized using number of the day (starting from Sunday = 0). It can has comma and dash separators additionally. `1` is a Monday, `1-5` is since **Mo** till **Fr**, `6,0` is **Sa** and **Su**. Use `0-6` for the whole week. Comma and dash can be used at the same time, like `1-3,5-6`
+You have to logon with each user with Atropos service installed to enable curfew parametrization.
 
 It is ready and will lock user screen each 30 seconds if user has exceeded allowed time. I'm going to implement option to shutdown Windows if time was exceeded. 
 
-### client
-
-This is small application that shows registred users that can be restricted with curfew. Read only.
-
-![client window](doc/images/clientWindow.png)
-
-Curfew are editable (but there is no validation yet). Users list still is read-only. You have to login with each user to edit curfew.
- 
 

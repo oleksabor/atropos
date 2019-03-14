@@ -1,5 +1,4 @@
 ﻿using Atropos.Common;
-using Atropos.Common.String;
 using Atropos.Server.Db;
 using Atropos.Server.Worker;
 using NUnit.Framework;
@@ -14,7 +13,7 @@ using System.Threading.Tasks;
 namespace atroposTest.Worker
 {
 	[TestFixture]
-	public class CheckTaskTest
+	public partial class CheckTaskTest
 	{
 		[TestCase]
 		public void CheckCurfewNoData()
@@ -34,7 +33,6 @@ namespace atroposTest.Worker
 		[TestCase]
 		public void CheckCurfewNoWeekDayMatch()
 		{
-
 			var user = GetUser();
 			var usageLog = GetUsageLog(user, TimeSpan.FromHours(2));
 
@@ -116,8 +114,7 @@ namespace atroposTest.Worker
 
 		Storage GetStorage(User user, UsageLog usageLog, IEnumerable<Curfew> curfews)
 		{
-			var d = MockRepository.Mock<Data>();
-			var st = MockRepository.Mock<Storage>(d);
+			var st = GetStorage();
 
 			st.Expect(_ => _.GetUser(user.Login)).Return(user);
 			st.Expect(_ => _.GetUsage(user.Login, usageLog.Date)).Return(new[] { usageLog });
@@ -125,5 +122,13 @@ namespace atroposTest.Worker
 
 			return st;
 		}
+
+		Storage GetStorage()
+		{
+			var data = MockRepository.Mock<IData>();
+			var st = MockRepository.Mock<Storage>(data);
+			return st;
+		}
+
 	}
 }
