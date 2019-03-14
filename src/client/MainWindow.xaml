@@ -33,7 +33,7 @@
 			</StackPanel>
 		</Border>
 		<GroupBox Grid.Row="1">
-			<ItemsControl ItemsSource="{Binding WeekUsages.Value}">
+			<ItemsControl ItemsSource="{Binding WeekUsages.Value}">   <!-- http://dotnetvisio.blogspot.com/2013/08/wpf-create-custom-bar-chart-using-grid.html -->
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"></StackPanel>
